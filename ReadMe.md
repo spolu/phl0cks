@@ -8,9 +8,10 @@ Since it is a SpaceWar-like environment, there is a physical simulation
 going on. Physics are simulated by simple newtonian integration with 
 a predefined step.
 
-Knwon as phl0ck, the programs are written in JavaScript and interfaced
+Knwon as phl0cks, the programs are written in JavaScript and interfaced
 with the simulation through a unique function `control` called at each 
-step of the simulation.
+step of the simulation. The simulation runs for 5mn after which a draw
+is declared.
 
 Phl0cks must be entirely contained within a single file when submitted to
 the engine. Each call to the `control` function should take no longer than
@@ -19,7 +20,7 @@ the engine. Each call to the `control` function should take no longer than
 
 #### Simulation and Data Model
 
-```
+```javascript
 /**
  * Control handler called at each step of the simulation
  * @param sim { t, { DELTA, MAX_SPEED, MAX_THRUST, MAX_ROTATION } }
@@ -35,7 +36,7 @@ the engine. Each call to the `control` function should take no longer than
 function control(sim, ship, ships, missiles, cb);
 ```
 
-#### Usage
+#### Command-Line Controls
 
 ```
 phl0ck signup

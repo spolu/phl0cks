@@ -45,6 +45,5 @@ phl0ck challenge new user path
 phl0ck challenge list
 phl0ck challenge accept index path
 phl0ck train path1 path2
-phl0ck boilerplate path 
 ```
 

@@ -1,0 +1,4 @@
+#!/usr/bin/env node
+
+var phl0cks = require('../lib/phl0cks.js');
+phl0cks.run();

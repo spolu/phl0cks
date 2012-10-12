@@ -1,8 +1,8 @@
 {
-  "name": "phl0ck",
-  "description": "Flawless command-line controls for phl0ck",
+  "name": "phl0cks",
+  "description": "Flawless command-line controls for phl0cks",
   "keywords": [
-    "phl0ck",
+    "phl0cks",
     "game",
     "cli"
   ],
@@ -11,14 +11,20 @@
   "maintainers": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/spolu/phl0ck"
+    "url": "https://github.com/spolu/phl0cks"
   },
   "dependencies": {
+    "fwk": "0.1.x",
     "colors": "0.6.0-1",
     "complete": "0.3.1"
+    "express": "3.0.x",
+    "consolidate": "0.3.1",
+    "handlebars": "1.0.6-2",
+    "mongodb": "1.1.x",
+    "nodemailer": "0.3.x"
   },
   "bin": {
-    "phl0ck": "./bin/phl0ck"
+    "phl0cks": "./bin/phl0cks"
   },
   "engines": {
     "node": ">= 0.8.0"

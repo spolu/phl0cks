@@ -1,6 +1,6 @@
-### Phl0ck
+### Phl0cks
 
-Phl0ck is a programming game in which two or more programs control 
+Phl0cks is a programming game in which two or more programs control 
 one or more spaceships in a SpaceWar-like environment with the goal of
 eliminating every other enemy ships and survive as long as possible.
 
@@ -39,11 +39,11 @@ function control(sim, ship, ships, missiles, cb);
 #### Command-Line Controls
 
 ```
-phl0ck signup
-phl0ck login
-phl0ck challenge new user path
-phl0ck challenge list
-phl0ck challenge accept index path
-phl0ck train path1 path2
+phl0cks signup
+phl0cks login
+phl0cks challenge new user path
+phl0cks challenge list
+phl0cks challenge accept index path
+phl0cks train path1 path2
 ```
 

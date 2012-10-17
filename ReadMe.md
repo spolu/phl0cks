@@ -20,6 +20,9 @@ the engine. Each call to the `control` function should take no longer than
 
 #### Simulation and Data Model
 
+A pl0ck is a javascript file with the following structure. The file is executed
+in a nodeJS module context so global variable as save to use within a phl0ck.
+
 ```javascript
 /**
  * --------------

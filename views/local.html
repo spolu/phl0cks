@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:fb="http://ogp.me/ns/fb#">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+
+    <title>Nitrogram: Set your Instagram Marketing on Fire</title>
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Icons -->
+    <link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+    <!-- Styles -->
+    <link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Libs -->
+    <script src="/lib/jquery-1.8.2.min.js"></script>
+    <script src="/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/lib/cell-0.3.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+  </head>
+  <body>
+    <script>
+      var socket = io.connect('/{{{channel}}}');
+      socket.on('step', function (data) {
+        console.log(data);
+      });
+    </script>
+  </body>
+</html>

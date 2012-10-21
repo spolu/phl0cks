@@ -1,5 +1,7 @@
 var util = require('util');
 
+var my = {};
+
 /**
  * --------------
  * Initialization

@@ -4,12 +4,9 @@ body {
 }
 
 #world {
+  margin-top: 20px;
   border: 1px solid grey; 
-  width: 80%; 
-  height: 80%; 
-  min-width:800px; 
-  min-height:800px;
-  margin-left: auto;
-  margin-right: auto;
+  width: 600px; 
+  height: 600px;
 }
 

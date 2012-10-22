@@ -5,14 +5,13 @@
  *
  * @param spec { id, owner, type,
  *               position, velocity,
- *               GL }
+ *               GL, voxel }
  */
 var missile = function(spec, my) {
   var my = my || {};
   var _super = {};
 
-  my.vx = voxel({ GL: spec.GL,
-                  halfsize: 2});
+  my.vx = spec.vx;
 
   // public
   var render;    /* render() */

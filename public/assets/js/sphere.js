@@ -13,8 +13,8 @@ var sphere = function(spec, my) {
   my.gl = spec.GL.gl();
 
   my.radius = spec.radius || 5.0;
-  my.latbands = spec.latbands || 30;
-  my.lngbands = spec.lngbands || 30;
+  my.latbands = spec.latbands || 4;
+  my.lngbands = spec.lngbands || 4;
 
   if(spec.useTexture)
     my.textured = 1;

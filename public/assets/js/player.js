@@ -15,9 +15,9 @@ var player = function(spec, my) {
 
   my.GL = GL({ canvas: my.canvas,
                fov: 45,
-               near: 500,
-               far: 14500,
-               pos: [0, 0, -10525] }); 
+               near: 50,
+               far: 5000,
+               pos: [0, 0, -4730] }); 
 
   my.pobjs = [];
   
@@ -40,6 +40,10 @@ var player = function(spec, my) {
 	
     // connects to server to start streaming replay data. 
     my.socket = io.connect('/' + my.channel);
+    my.msph = sphere({ GL: my.GL,
+                       radius: 4 });
+    my.ssph = sphere({ GL: my.GL,
+                       radius: 20 });
 	
     my.socket.on('step', function(data) {
       if(data.type === 'step') {
@@ -53,7 +57,8 @@ var player = function(spec, my) {
                 owner: obj.owner,
                 position: obj.p,
                 velocity: obj.v,
-                GL: my.GL
+                GL: my.GL,
+                vx: my.msph
               });
               my.pobjs.push(m);
               break;
@@ -65,7 +70,8 @@ var player = function(spec, my) {
                 owner: obj.owner,
                 position: obj.p,
                 velocity: obj.v,
-                GL: my.GL
+                GL: my.GL,
+                vx: my.ssph
               });
               my.pobjs.push(s);
               break;
@@ -86,7 +92,7 @@ var player = function(spec, my) {
                                       pobj.position().y,
                                       0]);	
   };
-    
+
   /**
    * renders the current scene
    */

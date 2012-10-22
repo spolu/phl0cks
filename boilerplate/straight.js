@@ -18,7 +18,9 @@ var my = {};
  * @param spec specifications of the simulated world
  */
 exports.init = function(size, spec) {
-  my.spec = spec;
+  //
+  // Your Implementation
+  //
   return;
 };
 
@@ -46,21 +48,16 @@ exports.init = function(size, spec) {
  */
 exports.control = function(step, t, ship, ships, missiles) {
   var theta = undefined;
-  // The pendulum continuously readjust its speed to make sure
-  // it does not reach an extremity of the world. It approximate
-  // a central force with a very simple implementation
   if(Math.abs(ship.state.p.x) > Math.abs(ship.state.p.y)) {
-    if(ship.state.p.x * ship.state.v.x >= -0.01) {
-      theta = ship.state.p.x > 0 ? Math.PI : 0;
-    }
+    theta = ship.state.p.x > 0 ? 0 : Math.PI;
   }
   else {
-    if(ship.state.p.y * ship.state.v.y >= -0.01) {
-      theta = ship.state.p.y > 0 ? 3 * Math.PI / 2 : Math.PI / 2;
-    }
+    theta = ship.state.p.y > 0 ? Math.PI / 2 : 3 * Math.PI / 2;
   }
+  //
+  // Your Implementation
+  //
   return { 
     theta: theta
   };
 };
-

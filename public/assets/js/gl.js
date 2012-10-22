@@ -169,8 +169,8 @@ var GL = function(spec, my) {
 
   init = function() {
     try {
-      my.gl = my.canvas.getContext("experimental-webgl");
-      //my.gl = WebGLDebugUtils.makeDebugContext(my.canvas.getContext("experimental-webgl"));
+      //my.gl = my.canvas.getContext("experimental-webgl");
+      my.gl = WebGLDebugUtils.makeDebugContext(my.canvas.getContext("experimental-webgl"));
     } 
     catch (e) {
       alert('Could not initialise WebGL: ' + e);
@@ -206,15 +206,19 @@ var GL = function(spec, my) {
 
     my.shader.vertexPositionAttribute = my.gl.getAttribLocation(my.shader, "aVertexPosition");
     my.gl.enableVertexAttribArray(my.shader.vertexPositionAttribute);
+    //console.log('my.shader.vertexPositionAttribute: ' + my.shader.vertexPositionAttribute);
 
     my.shader.vertexColorAttribute = my.gl.getAttribLocation(my.shader, "aVertexColor");
     my.gl.enableVertexAttribArray(my.shader.vertexColorAttribute);
+    //console.log('my.shader.vertexColorAttribute: ' + my.shader.vertexColorAttribute);
 
     my.shader.textureCoordAttribute = my.gl.getAttribLocation(my.shader, "aTextureCoord");
     my.gl.enableVertexAttribArray(my.shader.textureCoordAttribute);
+    //console.log('my.shader.textureCoordAttribute: ' + my.shader.textureCoordAttribute);
 
     my.shader.vertexNormalAttribute = my.gl.getAttribLocation(my.shader, "aVertexNormal");
     my.gl.enableVertexAttribArray(my.shader.vertexNormalAttribute);
+    //console.log('my.shader.vertexNormalAttribute: ' + my.shader.vertexNormalAttribute);
 
     my.shader.pMatrixUniform = my.gl.getUniformLocation(my.shader, "uPMatrix");
     my.shader.mvMatrixUniform = my.gl.getUniformLocation(my.shader, "uMVMatrix");

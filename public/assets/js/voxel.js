@@ -122,10 +122,11 @@ var voxel = function(spec, my) {
     my.gl.bufferData(my.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), my.gl.STATIC_DRAW);
     my.voxelVertexIndexBuffer.itemSize = 1;
     my.voxelVertexIndexBuffer.numItems = 36;	
+    console.log('INITED');
   };
 
-  CELL.method(that, 'setColor', setColor);
-  CELL.method(that, 'draw', draw);
+  CELL.method(that, 'setColor', setColor, _super);
+  CELL.method(that, 'draw', draw, _super);
 
   init();
 

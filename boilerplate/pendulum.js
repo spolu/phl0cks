@@ -60,7 +60,8 @@ exports.control = function(step, t, ship, ships, missiles) {
     }
   }
   return { 
-    theta: theta
+    theta: theta,
+    sigma: Math.random() * 2 * Math.PI
   };
 };
 

@@ -1,0 +1,15 @@
+body {
+  background-color: #000;
+  margin: 0px;
+}
+
+#world {
+  border: 1px solid grey; 
+  width: 80%; 
+  height: 80%; 
+  min-width:800px; 
+  min-height:800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+

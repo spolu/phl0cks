@@ -3,11 +3,12 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">    
 
     <meta name="description" content="" />
     <meta name="keywords" content="" />
 
-    <title>Nitrogram: Set your Instagram Marketing on Fire</title>
+    <title>Phl0cks</title>
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
     <!--[if lt IE 9]>
@@ -22,16 +23,55 @@
     
     <!-- Libs -->
     <script src="/lib/jquery-1.8.2.min.js"></script>
+    <script src="/lib/glMatrix-0.9.5.min.js"></script>
+    <!-- <script src="lib/webgl-debug.js"></script> -->
     <script src="/lib/bootstrap/js/bootstrap.min.js"></script>
     <script src="/lib/cell-0.3.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
+
+    <!-- Player -->
+    <script src="/assets/js/gl.js"></script>
+    <script src="/assets/js/voxel.js"></script>
+    <script src="/assets/js/sphere.js"></script>
+    <script src="/assets/js/pobj.js"></script>
+    <script src="/assets/js/ship.js"></script>
+    <script src="/assets/js/missile.js"></script>
+    <script src="/assets/js/player.js"></script>
+
+    <!-- Styles -->
+    <link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/local.css" rel="stylesheet">
   </head>
   <body>
     <script>
+      /*
       var socket = io.connect('/{{{channel}}}');
       socket.on('step', function (data) {
         console.log(data);
       });
+     */
+
+      var resize = function() {
+        //$('#world').height($('#world').width());
+        var canvas = document.getElementById('world');
+        canvas.width = $('#world').width();
+        canvas.height = $('#world').height();
+      }
+
+      window.onload = function () {
+        var canvas = document.getElementById('world');
+        resize();
+        var p = player({ 
+          canvas: canvas,
+          channel: '{{{channel}}}'
+        });
+        p.start();        
+        window.onresize = resize;
+      };
     </script>
+
+    <!-- OpenGL Canvas -->
+    <canvas id="world"></canvas>
+
   </body>
 </html>

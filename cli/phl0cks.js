@@ -27,13 +27,13 @@ phl0cks.run = function() {
 
 
 phl0cks.commands = {
-  'signup': require('./commands/signup.js').signup,
-  'login': require('./commands/login.js').login,
-  'logout': require('./commands/logout.js').logout,
-  'boilerplate': require('./commands/boilerplate.js').boilerplate,
-  'simulate': require('./commands/simulate.js').simulate,
-  'play': require('./commands/play.js').play,
-  'challenge': require('./commands/challenge.js').challenge
+  'signup': require('../lib/commands/signup.js').signup,
+  'login': require('../lib/commands/login.js').login,
+  'logout': require('../lib/commands/logout.js').logout,
+  'boilerplate': require('../lib/commands/boilerplate.js').boilerplate,
+  'simulate': require('../lib/commands/simulate.js').simulate,
+  'play': require('../lib/commands/play.js').play,
+  'challenge': require('../lib/commands/challenge.js').challenge
 };
 
 
@@ -149,9 +149,9 @@ phl0cks.welcome = function(cb_) {
   phl0cks.log.help('  phl0cks play');
   phl0cks.log.help('');
   phl0cks.log.help('To manage challenges'.cyan);
-  phl0cks.log.help('  phl0cks challenge new <size> <phl0ck> <user1> ... [<userN>]');
+  phl0cks.log.help('  phl0cks challenge new <size> <phl0ck> <user|email>');
   phl0cks.log.help('  phl0cks challenge list');
-  phl0cks.log.help('  phl0cks challenge accept <index|uid> <phl0ck>');
+  phl0cks.log.help('  phl0cks challenge fight <index|uid> <phl0ck>');
   phl0cks.log.help('');
   phl0cks.log.help('To get help'.cyan);
   phl0cks.log.help('  phl0cks help [<command>]');

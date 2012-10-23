@@ -5,7 +5,7 @@ body {
 
 #world {
   margin-top: 20px;
-  border: 1px solid grey; 
+  border: 1px solid #111; 
   width: 600px; 
   height: 600px;
 }

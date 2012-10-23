@@ -5,7 +5,7 @@
  *
  * @param spec { id, owner, type,
  *               position, velocity,
- *               GL }
+ *               player }
  */
 var pobj = function(spec, my) {
   var my = my || {};
@@ -19,6 +19,8 @@ var pobj = function(spec, my) {
 
   my.position = spec.position;
   my.velocity = spec.velocity;
+
+  my.player = spec.player;
 
   // public
   var render;    /* render() */

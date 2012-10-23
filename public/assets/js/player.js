@@ -12,22 +12,21 @@ var player = function(spec, my) {
 
   my.canvas = spec.canvas;
   my.channel = spec.channel;
-
-  my.GL = GL({ canvas: my.canvas,
-               fov: 45,
-               near: 50,
-               far: 5000,
-               pos: [0, 0, -4730] }); 
+  my.ctx = my.canvas.getContext("2d");
+  my.ratio = 600 / 4000;
 
   my.pobjs = [];
+
+  my.colors = {};
+  my.cc = 0;
   
   // public
   var start;       /* start(); */
 
   // private
   var render;      /* render(); */
-  var mvTo;        /* mvTo(body) */
-  var spone;
+  var color;       /* color(owner, type); */
+
 
   var that = {};
 
@@ -40,10 +39,6 @@ var player = function(spec, my) {
 	
     // connects to server to start streaming replay data. 
     my.socket = io.connect('/' + my.channel);
-    my.msph = sphere({ GL: my.GL,
-                       radius: 4 });
-    my.ssph = sphere({ GL: my.GL,
-                       radius: 20 });
 	
     my.socket.on('step', function(data) {
       if(data.type === 'step') {
@@ -57,8 +52,7 @@ var player = function(spec, my) {
                 owner: obj.owner,
                 position: obj.p,
                 velocity: obj.v,
-                GL: my.GL,
-                vx: my.msph
+                player: that
               });
               my.pobjs.push(m);
               break;
@@ -70,8 +64,7 @@ var player = function(spec, my) {
                 owner: obj.owner,
                 position: obj.p,
                 velocity: obj.v,
-                GL: my.GL,
-                vx: my.ssph
+                player: that
               });
               my.pobjs.push(s);
               break;
@@ -80,37 +73,54 @@ var player = function(spec, my) {
         });
       }
     });
+
+    my.socket.on('end', function() {
+      my.socket.socket.disconnect();
+      CELL.debug('--END');
+    });
+    my.socket.on('error', function(err) {
+      my.socket.socket.disconnect();
+      CELL.debug('--ERROR:');
+      CELL.debug(err);
+    });
   };
 
-  /**
-   * move the gl model view matrix to the body position
-   * @param body the body the model view is going to
-   */
-  mvTo = function(pobj) {
-    mat4.identity(my.GL.mvMatrix());
-    mat4.translate(my.GL.mvMatrix(), [pobj.position().x,
-                                      pobj.position().y,
-                                      0]);	
-  };
 
   /**
    * renders the current scene
    */
   render = function() {
-    my.GL.clear();
+    my.ctx.fillStyle = "rgb(5, 5, 15)";
+    my.ctx.fillRect(0, 0, my.canvas.width, my.canvas.height);
 
     my.pobjs.forEach(function(pobj) {
-      my.GL.mvPushMatrix();
-      mvTo(pobj);
-      pobj.render();
-      my.GL.mvPopMatrix();
+      pobj.render(my.ctx, my.ratio);
     });
 
-    my.GL.animationFrame(render);
+    setTimeout(render, 40);
+  };
+
+  /**
+   * Assigns and return a color for each owner
+   */
+  color = function(owner, type) {
+    if(!my.colors[owner]) {
+      // quick hack to get at least 5-6 good looking colors
+      my.cc += 127;
+      my.colors[owner] = my.cc % 360;
+    }
+    if(type === 'ship') {
+      ret = 'hsl(' + my.colors[owner] + ', 100%, 50%)';
+    }
+    if(type === 'missile') {
+      ret = 'hsl(' + my.colors[owner] + ', 80%, 30%)';
+    }
+    return ret;
   };
     
 
   CELL.method(that, 'start', start, _super);
+  CELL.method(that, 'color', color, _super);
     
   return that;
 };

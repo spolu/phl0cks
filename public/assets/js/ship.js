@@ -4,34 +4,30 @@
  * @extends pobj
  *
  * @param spec { id, owner, type,
- *               position, velocity,
- *               GL }
+ *               position, velocity }
  */
 
-var colors = {};
 
 var ship = function(spec, my) {
   var my = my || {};
   var _super = {};
-
-  my.vx = spec.vx;
 
   // public
   var render;    /* render() */
 
   var that = pobj(spec, my);    
 
-  if(!colors[my.owner]) {
-    console.log('picking color for: ' + my.owner);
-    colors[my.owner] = [Math.random(), Math.random(), Math.random(), 1];
-  }
-
   /**
    * Renders the ship
    */
-  render = function() {	
-    my.vx.setColor(colors[my.owner]);
-    my.vx.draw();
+  render = function(ctx, ratio) {	
+    ctx.fillStyle = my.player.color(my.owner, my.type);
+    ctx.beginPath();
+    ctx.arc(300 + my.position.x * ratio, 
+            300 + my.position.y * ratio, 
+            4, 0, Math.PI*2, true); 
+    ctx.closePath();
+    ctx.fill();
   };
 
   CELL.method(that, 'render', render, _super);

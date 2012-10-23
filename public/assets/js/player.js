@@ -11,11 +11,14 @@ var player = function(spec, my) {
   var _super = {};
 
   my.canvas = spec.canvas;
+  my.legend = spec.legend;
+
   my.channel = spec.channel;
   my.ctx = my.canvas.getContext("2d");
   my.ratio = 600 / 4000;
 
   my.pobjs = [];
+  my.owners = {};
 
   my.colors = {};
   my.cc = 0;
@@ -43,6 +46,7 @@ var player = function(spec, my) {
     my.socket.on('step', function(data) {
       if(data.type === 'step') {
         my.pobjs = [];
+        my.owners = {};
         data.objects.forEach(function(obj) {
           switch(obj.type) {
             case 'missile': {
@@ -67,6 +71,8 @@ var player = function(spec, my) {
                 player: that
               });
               my.pobjs.push(s);
+              my.owners[obj.owner] = my.owners[obj.owner] || 0;
+              my.owners[obj.owner]++;
               break;
             }
           }
@@ -75,10 +81,13 @@ var player = function(spec, my) {
     });
 
     my.socket.on('end', function() {
+      my.stopped = true;
+      render();
       my.socket.socket.disconnect();
       CELL.debug('--END');
     });
     my.socket.on('error', function(err) {
+      my.stopped = true;
       my.socket.socket.disconnect();
       CELL.debug('--ERROR:');
       CELL.debug(err);
@@ -97,7 +106,15 @@ var player = function(spec, my) {
       pobj.render(my.ctx, my.ratio);
     });
 
-    setTimeout(render, 40);
+    $(my.legend).empty();
+    for(var o in my.owners) {
+      $(my.legend).append('<span class="owner" ' +
+                          'style="color: ' + color(o) + '">' + o + 
+                          '</span> ');
+    }
+
+    if(!my.stopped)
+      setTimeout(render, 40);
   };
 
   /**
@@ -109,12 +126,10 @@ var player = function(spec, my) {
       my.cc += 127;
       my.colors[owner] = my.cc % 360;
     }
-    if(type === 'ship') {
-      ret = 'hsl(' + my.colors[owner] + ', 100%, 50%)';
-    }
     if(type === 'missile') {
       ret = 'hsl(' + my.colors[owner] + ', 80%, 30%)';
     }
+    ret = 'hsl(' + my.colors[owner] + ', 100%, 50%)';
     return ret;
   };
     

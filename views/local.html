@@ -57,9 +57,11 @@
 
       window.onload = function () {
         var canvas = document.getElementById('world');
+        var legend = document.getElementById('legend');
         resize();
         var p = player({ 
           canvas: canvas,
+          legend: legend,
           channel: '{{{channel}}}'
         });
         p.start();        
@@ -67,9 +69,12 @@
       };
     </script>
 
-    <!-- OpenGL Canvas -->
     <center>
-      <canvas id="world"></canvas>
+      <div class="wrapper">
+        <div class="title">Phl0cks</div>
+        <canvas id="world"></canvas>
+        <div id="legend"></div>
+      </div>
     </center>
 
   </body>

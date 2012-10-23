@@ -1,12 +1,44 @@
 body {
-  background-color: #000;
+  background-color: #111;
   margin: 0px;
 }
 
+.wrapper {
+  width: 602px;
+}
+
+.title {
+  width: 602px;
+  text-align: left;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: 800;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+  font-size: 14px;
+  text-shadow: black 1px 1px 2px;
+  color: #fff;
+  margin-top: 5px;
+}
+
 #world {
-  margin-top: 20px;
-  border: 1px solid #111; 
+  border: 1px solid #050505; 
   width: 600px; 
   height: 600px;
+  overflow: hidden;
 }
+
+#legend {
+  position: relative;
+  top: -5px;
+  width: 600px;
+  height: 20px;
+  text-align: left;
+}
+
+#legend .owner {
+  font-size: 12px;
+  margin-right: 5px;
+  font-weight: bold;
+}
+
 

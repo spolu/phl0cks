@@ -1,9 +1,13 @@
 var colors = require('colors');
+var fwk = require('fwk');
 var util = require('util');
+
+// cfg
+var cfg = fwk.populateConfig(require("../config.js").config);
 
 var phl0cks = module.exports;
 
-phl0cks.VERSION = '0.3.0';
+phl0cks.VERSION = cfg['PHL0CKS_VERSION'];
 phl0cks.LOGGING = true;
 
 phl0cks.intro = function() {
@@ -83,6 +87,7 @@ phl0cks.exec = function(commands, cb_) {
         break;
       }
       default:
+        phl0cks.intro();
         phl0cks.welcome(cb_);
         cb_();
         break;
@@ -149,7 +154,7 @@ phl0cks.welcome = function(cb_) {
   phl0cks.log.help('  phl0cks play');
   phl0cks.log.help('');
   phl0cks.log.help('To manage challenges'.cyan);
-  phl0cks.log.help('  phl0cks challenge new <size> <phl0ck> <user|email>');
+  phl0cks.log.help('  phl0cks challenge new <size> <phl0ck> <user|email> ... [<user|email>]');
   phl0cks.log.help('  phl0cks challenge list');
   phl0cks.log.help('  phl0cks challenge fight <index|uid> <phl0ck>');
   phl0cks.log.help('');

@@ -1,37 +1,3 @@
-var handle_error = function(err) {
-  return res.json({
-    ok: false,
-    error: err.message
-  });
-};
-
-/**
- * @path GET /ping
- */
-exports.get_ping = function(req, res, next) {
-  var auth = req.param('auth');
-  var c = req.store.mongo.collection('users');
-  c.findOne({ auth: auth }, function(err, usr) {
-    if(err) {
-      return handle_error(err);
-    }
-    else if(usr) {
-      res.json({
-        ok: true,
-        min_version: req.store.cfg['PHL0CKS_MIN_VERSION'],
-        logged_in: true,
-        handle: usr.handle
-      });
-    }
-    else {
-      res.json({
-        ok: true,
-        min_version: req.store.cfg['PHL0CKS_MIN_VERSION'],
-        logged_in: false
-      });
-    }
-  });
-};
 
 /**
  * @path POST /signup
@@ -43,50 +9,52 @@ exports.post_signup = function(req, res, next) {
 
   var email_r = /^[a-zA-Z0-9\._\-\+]+@[a-z0-9\._\-]{2,}\.[a-z]{2,4}$/;
   if(!email_r.exec(email)) {
-    return handle_error(new Error('Invalid email: ' + email));
+    return res.error(new Error('Invalid email ' + email_r.toString()));
   }
-  if(typeof username !== 'string' || username.length <= 0) {
-    return handle_error(new Error('Invalid username: ' + username));
+  var username_r = /^[a-zA-Z0-9\-_\.]{3,32}$/;
+  if(!username_r.exec(username)) {
+    return res.error(new Error('Invalid username ' + username_r.toString()));
   }
-  if(typeof password !== 'string' || password.length < 4) {
-    return handle_error('Invalid password (min 4 characters)');
+  var password_r = /^.{4,}$/;
+  if(!password_r.exec(password)) {
+    return res.error(new Error('Invalid password ' + password_r.toString()));
   }
 
   var c = req.store.mongo.collection('users');
   c.findOne({ username: username }, function(err, usr) {
     if(err) {
-      return handle_error(err);
+      return res.error(err);
     }
     else if(usr) {
-      return handle_error(new Error('Username already exists: ' + username));
+      return res.error(new Error('Username already exists: ' + username));
     }
     else {
-      var hm1 = crypto.createHmac('sha512',
-                                  req.store.cfg['PHL0CKS_SECRET']); 
-      hm1.update(password);
-      var hmac = hm1.digest('hex');
+      var now = new Date();
 
-      var hm2 = crypto.createHmac('sha512',
-                                  req.store.cfg['PHL0CKS_SECRET']); 
-      hm2.update(username + Date.now());
-      var auth = hm2.digest('hex');
+      var hash = req.store.access.hmac(password);
+      var auth = req.store.access.hmac(username + '-' + now.getTime());
+      var verify = req.store.access.hmac(email + '-' + Math.random()).substr(0, 4);
 
       var usr = {
         username: username,
-        created_at: new Date(),
-        hmac: hmac,
+        created_at: now,
+        hash: hash,
         email: email,
         auth: auth,
-        verified: false
+        verified: false,
+        verify: verify
       };
+
       c.insert(usr, function(err) {
         if(err) {
-          return handle_error(err);
+          return res.error(err);
         }
         else {
-          res.json({
-            ok: true,
-            auth: auth
+          req.user = usr;
+          res.data({
+            username: username,
+            created_at: now.getTime(),
+            auth: auth,
           });
         }
       });
@@ -98,10 +66,91 @@ exports.post_signup = function(req, res, next) {
  * @path GET /login
  */
 exports.get_login = function(req, res, next) {
+  var username = req.param('username');
+  var password = req.param('password');
+
+  var c = req.store.mongo.collection('users');
+  c.findOne({ username: username }, function(err, usr) {
+    if(err) {
+      return res.error(err);
+    }
+    else if(!usr) {
+      return res.error(new Error('Username unknown: ' + username));
+    }
+    else {
+      var hash = req.store.access.hmac(passowrd);
+      if(hash === usr.hash) {
+        req.user = usr;
+        res.data({
+          auth: auth,
+        });
+      }
+      else {
+        return res.error(new Error('Wrong password'));
+      }
+    }
+  });
+};
+
+
+/**
+ * @path GET /ping
+ */
+exports.get_ping = function(req, res, next) {
+  return res.data({});
 };
 
 /**
  * @path GET /logout
+ * Logs out all clients by changing the auth key
  */
 exports.get_logout = function(req, res, next) {
+  var now = new Date();
+  var username = req.user.username;
+  var auth = req.store.access.hmac(username + '-' + now.getTime());
+
+  var c = req.store.mongo.collection('users');
+  c.update({ username: username }, 
+           { $set: { auth: auth } }, 
+           { multi: false },
+           function(err) {
+             if(err) {
+               return res.error(err);
+             }
+             else {
+               delete req.user;
+               return res.data({});
+             }
+           });
 };
+
+/**
+ * @path GET /verify
+ */
+exports.get_verify = function(req, res, next) {
+  var verify = req.param('verify');
+
+  if(req.user.verified) {
+    return res.error(new Error('User already verified'));
+  }
+
+  if(req.user.verify === verify) {
+    var c = req.store.mongo.collection('users');
+    c.update({ username: username }, 
+             { $set: { verified: true } }, 
+             { multi: false },
+             function(err) {
+               if(err) {
+                 return res.error(err);
+               }
+               else {
+                 req.user.verified = true;
+                 return res.data({});
+               }
+             });
+  }
+  else {
+    return res.error(new Error('Verification failed'));
+  }
+};
+

@@ -26,6 +26,14 @@ var mongo = new mongodb.Db(cfg['PHL0CKS_MONGO_DB'],
                            { native_parser: false,
                              safe: true });
 
+// Access
+var access = require('./access.js').access({ 
+  app: app,
+  cfg: cfg, 
+  mongo: mongo
+});
+
+
 // Configuration
 app.configure(function(){
   app.set('view engine', 'html');
@@ -34,13 +42,7 @@ app.configure(function(){
   app.use(express.static(__dirname + '/../public'));
   app.use(express.bodyParser());
   app.use(express.methodOverride());
-  
-  app.use(function(req, res, next) {
-    req.store = {
-      mongo: mongo,
-      cfg: cfg
-    };
-  });
+  app.use(access.accessVerifier);
 });
 
 app.configure('development', function(){
@@ -66,18 +68,21 @@ app.get( '/',                                 require('./routes/main.js').get_in
 
 // ADMIN [JSON]
 
-app.get( '/ping',                             require('./routes/admin.js').get_ping);
 app.post('/signup',                           require('./routes/admin.js').post_signup);
 app.get( '/login',                            require('./routes/admin.js').get_login);
+app.get( '/ping',                             require('./routes/admin.js').get_ping);
 app.get( '/logout',                           require('./routes/admin.js').get_logout);
+app.get( '/verify',                           require('./routes/admin.js').get_verify);
 
 
 // CHALLENGES [JSON]
 
-app.get( '/challenge',                        require('./routes/challenge.js').get_complete);
-app.post('/complete',                         require('./routes/challenge.js').post_complete);
-app.get( '/signout',                          require('./routes/challenge.js').get_signout);
-app.get( '/users',                            require('./routes/challenge.js').get_users);
+app.get( '/challenge/list',                   require('./routes/challenge.js').get_challenge_list);
+app.put( '/challenge',                        require('./routes/challenge.js').put_challenge);
+app.get( '/challenge/:id',                    require('./routes/challenge.js').get_challenge);
+app.del( '/challenge/:id',                    require('./routes/challenge.js').del_challenge);
+app.post('/challenge/:id/accept',             require('./routes/challenge.js').post_challenge_accept);
+app.post('/challenge/:id/fight',              require('./routes/challenge.js').post_challenge_fight);
 
 
 // DB AUTHENTICATION & START
@@ -105,8 +110,6 @@ app.get( '/users',                            require('./routes/challenge.js').g
       cert: fs.readFileSync('ssl/phl0cks.crt')
     };
 
-    var http_srv = http.createServer(app).listen(parseInt(cfg['PHL0CKS_HTTP_PORT'], 10));
-    console.log('HTTP Server started on port: ' + cfg['PHL0CKS_HTTP_PORT']);
     var https_srv = https.createServer(https_options, app).listen(parseInt(cfg['PHL0CKS_HTTPS_PORT'], 10));
     console.log('HTTPS Server started on port: ' + cfg['PHL0CKS_HTTPS_PORT']);
   });

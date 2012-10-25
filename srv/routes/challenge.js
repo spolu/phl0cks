@@ -92,7 +92,7 @@ exports.put_challenge = function(req, res, next) {
     // }
 
     // create challenger
-    req.store.access.phl0ck_store(phl0ck, function(err, sha, path) {
+    req.store.access.phl0ck_store(req.user.username, phl0ck, function(err, sha, path) {
       if(err)
         return res.error(err);
       else {

@@ -157,17 +157,19 @@ var access = function(spec, my) {
   /**
    * Stores a new phl0cks encoded as b64 data into its destination
    * path and returns the sha generated as well as the full path
+   * @param username string username of the owner of the phl0ck
    * @param b64 string base64 encoded phl0ck code
    * @param cb_ function(err, sha, p)
    */
-  phl0ck_store = function(b64, cb_) {
+  phl0ck_store = function(username, b64, cb_) {
     var buf = new Buffer(b64, 'base64');
 
     var hash = crypto.createHash('sha256');
+    hash.updaet(username);
     hash.update(buf);
     var sha = hash.diget('hex');
 
-    var p = path.resolve(my.cfg['PHL0CKS_DATA_PATH'] + '/' + sha);
+    var p = path.resolve(my.cfg['PHL0CKS_DATA_PATH'] + '/phl0ck/' + username + '/' + sha);
     fs.writeFile(p, buf, function(err) {
       if(err)
         return cb_(err);

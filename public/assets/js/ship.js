@@ -25,7 +25,7 @@ var ship = function(spec, my) {
     ctx.beginPath();
     ctx.arc(300 + my.position.x * ratio, 
             300 + my.position.y * ratio, 
-            4, 0, Math.PI*2, true); 
+            3, 0, Math.PI*2, true); 
     ctx.closePath();
     ctx.fill();
   };

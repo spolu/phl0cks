@@ -77,8 +77,8 @@ app.get( '/verify',                           require('./routes/admin.js').get_v
 
 // CHALLENGES [JSON]
 
-app.get( '/challenge/list',                   require('./routes/challenge.js').get_challenge_list);
 app.put( '/challenge',                        require('./routes/challenge.js').put_challenge);
+app.get( '/challenge/list',                   require('./routes/challenge.js').get_challenge_list);
 app.get( '/challenge/:id',                    require('./routes/challenge.js').get_challenge);
 app.del( '/challenge/:id',                    require('./routes/challenge.js').del_challenge);
 app.post('/challenge/:id/accept',             require('./routes/challenge.js').post_challenge_accept);

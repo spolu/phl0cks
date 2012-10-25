@@ -1,5 +1,6 @@
 var fwk = require('fwk');
 var crypto = require('crypto');
+var fs = require('fs');
 
 /**
  * Access checker
@@ -18,8 +19,10 @@ var access = function(spec, my) {
   my.mongo = spec.mongo;
 
   // public
-  var accessVerifier;       /* verify(req, res, cb); */
+  var accessVerifier;       /* verify(req, res, next); */
   var hmac;                 /* hmac(data); */
+  var next_counter;         /* next_counter(type, cb_); */
+  var phl0ck_store;         /* phl0ck_store(b64, cb_); */
 
   //private
   var check_auth;            /* check_key(req) */
@@ -123,10 +126,62 @@ var access = function(spec, my) {
     return hm.digest('hex');
   };
 
+  /**
+   * Get the next counter value, update the counter and returns it
+   * @param type string counter type
+   * @param cb_ function(err, val)
+   */
+  next_counter = function(type, cb_) {
+    var c = my.mongo.collection('counters');
+
+    // counters: {
+    //   type: 'challenge',
+    //   value: 2930
+    // }
+    
+    c.update({ type: type }, { $inc : { value: 1 } }, function(err) {
+      if(err)
+        return cb_(err);
+      else {
+        c.findOne({ type: type }, function(err, cnt) {
+          if(err)
+            return cb_(err);
+          else {
+            cb_(null, cnt.value);
+          }
+        });
+      }
+    });
+  };
+
+  /**
+   * Stores a new phl0cks encoded as b64 data into its destination
+   * path and returns the sha generated as well as the full path
+   * @param b64 string base64 encoded phl0ck code
+   * @param cb_ function(err, sha, p)
+   */
+  phl0ck_store = function(b64, cb_) {
+    var buf = new Buffer(b64, 'base64');
+
+    var hash = crypto.createHash('sha256');
+    hash.update(buf);
+    var sha = hash.diget('hex');
+
+    var p = path.resolve(my.cfg['PHL0CKS_DATA_PATH'] + '/' + sha);
+    fs.writeFile(p, buf, function(err) {
+      if(err)
+        return cb_(err);
+      else {
+        cb_(null, sha, p);
+      }
+    });
+  };
+
+
   fwk.method(that, 'accessVerifier', accessVerifier, _super);
   fwk.method(that, 'hmac', hmac, _super);
+  fwk.method(that, 'next_counter', next_counter, _super);
+  fwk.method(that, 'phl0ck_store', phl0ck_store, super);
 
   return that;
 };
-
-exports.access = access;

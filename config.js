@@ -4,6 +4,8 @@ var config = fwk.baseConfig();
 config['PHL0CKS_VERSION'] = '0.3.0';
 config['PHL0CKS_MIN_VERSION'] = '0.3.0';
 
+config['PHL0CKS_DATA_PATH'] = 'dummy-env';
+
 config['PHL0CKS_SECRET'] = 'dummy-env';
 
 config['PHL0CKS_SMTP_HOST'] = 'smtp.sendgrid.net';

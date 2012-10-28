@@ -97,7 +97,7 @@ exports.get_login = function(req, res, next) {
  * @path GET /ping
  */
 exports.get_ping = function(req, res, next) {
-  return res.data({});
+  return res.ok();
 };
 
 /**
@@ -119,7 +119,7 @@ exports.get_logout = function(req, res, next) {
              }
              else {
                delete req.user;
-               return res.data({});
+               return res.ok();
              }
            });
 };
@@ -145,7 +145,7 @@ exports.get_verify = function(req, res, next) {
                }
                else {
                  req.user.verified = true;
-                 return res.data({});
+                 return res.ok();
                }
              });
   }

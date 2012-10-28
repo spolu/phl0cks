@@ -76,6 +76,19 @@ var access = function(spec, my) {
       }
       return res.json(json);
     };
+    // Jon OK Responses
+    res.ok = function() {
+      var json = {
+        ok: true,
+        min_version: my.cfg['PHL0CKS_MIN_VERSION'],
+        logged_in: false
+      };
+      if(req.user) {
+        json.logged_in = true;
+        json.verified = user.verified;
+      }
+      return res.json(json);
+    };
 
 
     if(my.cfg['DEBUG']) {

@@ -18,7 +18,7 @@ config['PHL0CKS_MONGO_PORT'] = '27017';
 config['PHL0CKS_MONGO_DB'] = 'phl0cks';
 config['PHL0CKS_MONGO_RECONNECT'] = true;
 
-config['PHL0CKS_HTTPS_PORT'] = 3000;
+config['PHL0CKS_HTTPS_PORT'] = 3210;
 
 exports.config = config;
 

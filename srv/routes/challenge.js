@@ -2,6 +2,7 @@ var util = require('util');
 var path = require('path');
 var crypto = require('crypto');
 var fwk = require('fwk');
+var exec = require('child_process').exec;
 
 /**
  * @path PUT /challenge
@@ -9,7 +10,7 @@ var fwk = require('fwk');
 exports.put_challenge = function(req, res, next) {
   // req.body 
   // {
-  //   users: ['x1nt0', 'stan@teleportd.com', 'gabhubert'],
+  //   players: ['x1nt0', 'stan@teleportd.com', 'gabhubert'],
   //   size: 5,
   //   phl0ck: #base64
   // }
@@ -57,26 +58,16 @@ exports.put_challenge = function(req, res, next) {
     if(err) 
       return res.error(err);
     else {
-      if(users.length !== usernames) {
-        users.forEach(function(u) {
-          fwk.remove(usernames, u);
-        });
+      // translate users to email
+      users.forEach(function(u) {
+        fwk.remove(usernames, u.username);
+        emails.push(u.email);
+      });
+
+      if(usernames.length > 0) {
         return res.error(new Error('Unknown username(s): ' + usernames.join(',')));
       }
-      else {
-        // translate email to user if possible
-        cu.find({ email: { $in: emails } }).toArray(function(err, users) {
-          if(err)
-            return res.error(err);
-          else {
-            users.forEach(function(u) {
-              fwk.remove(emails, u.email);
-              usernames.push(u.username);
-            });
-            process();
-          }
-        });
-      }
+      process();
     }
   });
 
@@ -106,13 +97,6 @@ exports.put_challenge = function(req, res, next) {
               users: [],
               guests: []
             };
-            usernames.forEach(function(u) {
-              challenge.users.push({ 
-                username: u, 
-                attempts: 0, 
-                win: 0 
-              });
-            });
             challenge.users.push({ 
               username: req.user.username,
               phl0ck: sha,
@@ -133,9 +117,9 @@ exports.put_challenge = function(req, res, next) {
             // finally insert new challenge
             ch.insert(challenge, function(err) {
               if(err)
-                res.error(err);
+                return res.error(err);
               else {
-                res.data(challenge);
+                return res.data(challenge);
               }
             });
           }
@@ -146,3 +130,239 @@ exports.put_challenge = function(req, res, next) {
 };
 
 
+/**
+ * @path GET /challenge/list
+ */
+exports.get_challenge_list = function(req, res, next) {
+  var ch = req.store.mongo.collection('challenges');
+  ch.find({ 'users.username': req.user.username }).toArray(function(err, challenges) {
+    if(err)
+      return res.error(err);
+    else {
+      var list = [];
+      challenges.forEach(function(c) {
+        var status = 'ready';
+        if(c.guest.length > 0)
+          status = 'pending';
+        c.users.forEach(function(u) {
+          if(!u.phl0ck)
+            status = 'pending';
+          if(!u.phl0ck && u.username === req.user.username) {
+            status = 'waiting';
+            break;
+          }
+        });
+        list.push({
+          id: c.id,
+          size: c.size,
+          winner: c.winner,
+          status: status
+        });
+      });
+      return res.data(list);
+    }
+  });
+};
+
+
+/**
+ * @path GET /challenge/:id
+ */
+exports.get_challenge = function(req, res, next) {
+  var ch = req.store.mongo.collection('challenges');
+  ch.find({ id: req.param('id') }).findOne(function(err, c) {
+    if(err)
+      return res.error(err);
+    else {
+      var status = 'ready';
+      if(c.guest.length > 0)
+        status = 'pending';
+      c.users.forEach(function(u) {
+        if(!u.phl0ck)
+          status = 'pending';
+        if(!u.phl0ck && u.username === req.user.username) {
+          status = 'waiting';
+          break;
+        }
+      });
+      c.status = status;
+      return res.data(c);
+    }
+  });
+};
+
+/**
+ * @path DELETE /challenge/:id
+ */
+exports.del_challenge = function(req, res, next) {
+  var ch = req.store.mongo.collection('challenges');
+  ch.find({ id: req.param('id') }).findOne(function(err, c) {
+    if(err)
+      return res.error(err);
+    else {
+      var can = false;
+      c.users.forEach(function(u) {
+        if(u.username === req.user.username)
+          can = true;
+      });
+      if(!can)
+        return res.error(new Error('Not authorized'));
+      else {
+        ch.remove({ id: req.param('id') }, function(err) {
+          if(err)
+            return res.error(err);
+          else {
+            return res.ok();
+          }
+        });
+      }
+    }
+  });
+};
+
+/**
+ * @path POST /challenge/:id/add
+ */
+exports.post_challenge_add = function(req, res, next) {
+  // req.body 
+  // {
+  //   code: 'a23sd2'
+  // }
+  if(!req.body) {
+    return res.error(new Error('No body specified'));
+  }
+  var code = req.body.code;
+
+  var code_r = /^[a-fA-F0-9]{6}$/;
+  if(!code_r.exec(code)) {
+    return res.error(new Error('Invalid code ' + code_r.toString()));
+  }
+
+  var ch = req.store.mongo.collection('challenges');
+  ch.find({ id: req.param('id') }).findOne(function(err, c) {
+    if(err)
+      return res.error(err);
+    else {
+      var guest = null;
+      c.guests.forEeach(function(g) {
+        if(g.code === code)
+          guest = g;
+      });
+      if(!guest) {
+        return res.error(new Error('Cannot add, code not found: ' + code));
+      }
+      else {
+        ch.update({ id: req.param('id') },
+                  { $pull: { guests : { code : code } },
+                    $push: { users: { username: req.user.name,
+                                      attempts: 0,
+                                      wins: 0 } } },
+                  { multi: false },
+                  function(err) {
+                    if(err)
+                      return res.error(err);
+                    else {
+                      return res.ok();
+                    }
+                  });
+      }
+    }
+  });
+};
+
+
+/**
+ * @path POST /challenge/:id/fight
+ */
+exports.post_challenge_fight = function(req, res, next) {
+  // req.body
+  // {
+  //   phl0ck: b64
+  // }
+  if(!req.body) {
+    return res.error(new Error('No body specified'));
+  }
+  var phl0ck = req.body.phl0ck;
+
+  if(typeof phl0ck !== 'string' || phl0ck.length <= 0) {
+    return res.error(new Error('Error transmitting phl0ck code'));
+  }
+
+  var ch = req.store.mongo.collection('challenges');
+  ch.find({ id: req.param('id') }).findOne(function(err, c) {
+    if(err)
+      return res.error(err);
+    else {
+      // check conditions to process: not winner
+      if(u.username === c.winner) {
+        return res.error('Cannot fight as winner of the challenge');
+      }
+      else {
+        process(c);
+      }
+    }
+  });
+
+  // set the phl0ck for the given player and eventually
+  // call combat() to simulate the combat if possible
+  var process(c) {
+    req.store.access.phl0ck_store(req.user.username, phl0ck, function(err, sha, path) {
+      if(err)
+        return res.error(err);
+      else {
+        var combat = c.guests.length > 0 ? false : true;
+        c.users.forEach(function(u) {
+          if(u.username === req.user.username) {
+            u.phl0ck = sha;
+          }
+          else if(!u.phl0ck) {
+            combat = false;
+          }
+        });
+        //ch.update({ id: req.param('id') }, c, { multi: false }
+        if(combat) {
+          combat(c);
+        }
+        else {
+          res.data({ status: 'pending' });
+        }
+      }
+    });
+  };
+
+  // simulate the combat and update the challenge according
+  // to the result of the simulation
+  var combat(c) {
+    req.store.access.next_counter('combat', function(err, cnt) {
+      if(err)
+        return res.error(err);
+      else {
+        var id = fwk.b64encode(cnt);
+        var p = path.resolve(my.cfg['PHL0CKS_DATA_PATH'] + '/combat/' + id);
+        var cmd = 'phl0cks simulate ' + c.size;
+        c.users.forEach(function(u) {
+          cmd += ' ' + u.username + ':';
+          cmd += path.resolve(my.cfg['PHL0CKS_DATA_PATH'] + '/phl0ck/' + u.phl0ck);
+        });
+        cmd += ' --short --out=' + p;
+        exec(cmd, function(err, stdout, stderr) {
+          if(err)
+            return res.error(err);
+          else {
+            try {
+              var result = JSON.parse(stdout);
+              //TODO: update challenge
+              res.data({ 
+                combat: id,
+                winner: result.winner
+              });
+            }
+            catch(err) {
+              return res.error(err);
+            }
+          }
+        });
+      }
+    });
+  };
+};

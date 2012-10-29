@@ -58,7 +58,7 @@ var access = function(spec, my) {
       }
       if(req.user) {
         json.logged_in = true;
-        json.verified = user.verified;
+        json.verified = req.user.verified;
       }
       return res.json(json);
     };
@@ -72,7 +72,7 @@ var access = function(spec, my) {
       };
       if(req.user) {
         json.logged_in = true;
-        json.verified = user.verified;
+        json.verified = req.user.verified;
       }
       return res.json(json);
     };
@@ -85,14 +85,14 @@ var access = function(spec, my) {
       };
       if(req.user) {
         json.logged_in = true;
-        json.verified = user.verified;
+        json.verified = req.user.verified;
       }
       return res.json(json);
     };
 
 
     if(my.cfg['DEBUG']) {
-      console.log('EVAL: ' + req.url + ' (' + req.method + ') ' + ig_id);
+      console.log('EVAL: ' + req.url + ' (' + req.method + ')');
     }
 
     /**
@@ -115,16 +115,17 @@ var access = function(spec, my) {
     /**
      * First check for public pathes
      */
-    [/^\/$/,
-     /^\/login(\?.*){0,1}$/,
-     /^\/signup(\?.*){0,1}$/].forEach(function(r) {
-       if(r.test(req.url)) {
-         return next();
-       }
-     });
+    var public = [/^\/$/,
+                  /^\/login(\?.*){0,1}$/,
+                  /^\/signup(\?.*){0,1}$/];
+    for(var i = 0; i < public.length; i ++) {
+      var r = public[i];
+      if(r.test(req.url)) {
+        return next();
+      }
+    }
 
-
-     res.data({}, false);
+     res.data({});
   };
  
 
@@ -134,7 +135,7 @@ var access = function(spec, my) {
    */
   hmac = function(data, cfg) {
     var hm = crypto.createHmac('sha512',
-                               cfg['PHL0CKS_SECRET']); 
+                               my.cfg['PHL0CKS_SECRET']); 
     hm.update(data);
     return hm.digest('hex');
   };

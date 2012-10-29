@@ -63,11 +63,20 @@ exports.post_signup = function(req, res, next) {
 };
 
 /**
- * @path GET /login
+ * @path POST /login
  */
-exports.get_login = function(req, res, next) {
+exports.post_login = function(req, res, next) {
   var username = req.param('username');
   var password = req.param('password');
+
+  var username_r = /^[a-zA-Z0-9\-_\.]{3,32}$/;
+  if(!username_r.exec(username)) {
+    return res.error(new Error('Invalid username ' + username_r.toString()));
+  }
+  var password_r = /^.{4,}$/;
+  if(!password_r.exec(password)) {
+    return res.error(new Error('Invalid password ' + password_r.toString()));
+  }
 
   var c = req.store.mongo.collection('users');
   c.findOne({ username: username }, function(err, usr) {
@@ -78,11 +87,11 @@ exports.get_login = function(req, res, next) {
       return res.error(new Error('Username unknown: ' + username));
     }
     else {
-      var hash = req.store.access.hmac(passowrd);
+      var hash = req.store.access.hmac(password);
       if(hash === usr.hash) {
         req.user = usr;
         res.data({
-          auth: auth,
+          auth: usr.auth,
         });
       }
       else {
@@ -128,13 +137,13 @@ exports.get_logout = function(req, res, next) {
  * @path GET /verify
  */
 exports.get_verify = function(req, res, next) {
-  var verify = req.param('verify');
+  var code = req.param('code');
 
   if(req.user.verified) {
     return res.error(new Error('User already verified'));
   }
 
-  if(req.user.verify === verify) {
+  if(req.user.verify === code) {
     var c = req.store.mongo.collection('users');
     c.update({ username: username }, 
              { $set: { verified: true } }, 

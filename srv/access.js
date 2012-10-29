@@ -96,23 +96,6 @@ var access = function(spec, my) {
     }
 
     /**
-     * First check if logged in
-     */
-     var auth = req.headers['x-phl0cks-auth'] || req.param('auth');
-     if(typeof auth === 'string') {
-       var c = req.store.mongo.collection('users');
-       c.findOne({ auth: auth }, function(err, usr) {
-         if(err) {
-           return res.error(err);
-         }
-         else if(usr) {
-           req.user = usr;
-           return next();
-         }
-       });
-     }
-
-    /**
      * First check for public pathes
      */
     var public = [/^\/$/,
@@ -125,7 +108,33 @@ var access = function(spec, my) {
       }
     }
 
-     res.data({});
+    /**
+     * First check if logged in
+     */
+    var auth = req.headers['x-phl0cks-auth'] || req.param('auth');
+    if(typeof auth === 'string') {
+      var c = req.store.mongo.collection('users');
+      c.findOne({ auth: auth }, function(err, usr) {
+        if(err) {
+          return res.error(err);
+        }
+        else if(usr) {
+          req.user = usr;
+          // verification check
+          if(/^\/challenge/.text(req.url) && !req.user.verified) {
+            return res.error(new Error('Account not verified'));
+          }
+          else 
+            return next();
+        }
+        else {
+          res.error(new Error('Not logged in'));
+        }
+      });
+      return;
+    }
+
+    res.error(new Error('Not logged in'));
   };
  
 

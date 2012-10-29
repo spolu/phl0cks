@@ -32,6 +32,7 @@ phl0cks.run = function() {
 
 phl0cks.commands = {
   'signup': require('../lib/commands/signup.js').signup,
+  'verify': require('../lib/commands/verify.js').verify,
   'login': require('../lib/commands/login.js').login,
   'logout': require('../lib/commands/logout.js').logout,
   'boilerplate': require('../lib/commands/boilerplate.js').boilerplate,
@@ -56,6 +57,7 @@ phl0cks.exec = function(commands, cb_) {
 
     switch(cmd) {
       case 'signup':
+      case 'verify':
       case 'login':
       case 'logout':
       case 'play':

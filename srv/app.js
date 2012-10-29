@@ -69,7 +69,7 @@ app.get( '/',                                 require('./routes/main.js').get_in
 // ADMIN [JSON]
 
 app.post('/signup',                           require('./routes/admin.js').post_signup);
-app.get( '/login',                            require('./routes/admin.js').get_login);
+app.post('/login',                            require('./routes/admin.js').post_login);
 app.get( '/ping',                             require('./routes/admin.js').get_ping);
 app.get( '/logout',                           require('./routes/admin.js').get_logout);
 app.get( '/verify',                           require('./routes/admin.js').get_verify);

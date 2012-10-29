@@ -311,28 +311,36 @@ exports.post_challenge_fight = function(req, res, next) {
         return res.error(err);
       else {
         var combat = c.guests.length > 0 ? false : true;
+        var first = false;
         c.users.forEach(function(u) {
           if(u.username === req.user.username) {
+            if(!u.phl0ck)
+              first = true;
             u.phl0ck = sha;
           }
           else if(!u.phl0ck) {
             combat = false;
           }
         });
-        //ch.update({ id: req.param('id') }, c, { multi: false }
-        if(combat) {
-          combat(c);
-        }
-        else {
-          res.data({ status: 'pending' });
-        }
+        ch.update({ id: req.param('id') }, c, { multi: false }, function(err) {
+          if(err) 
+            return res.error(err);
+          else {
+            if(combat) {
+              combat(c, first);
+            }
+            else {
+              res.data({ status: 'pending' });
+            }
+          }
+        });
       }
     });
   };
 
   // simulate the combat and update the challenge according
   // to the result of the simulation
-  var combat(c) {
+  var combat(c, first) {
     req.store.access.next_counter('combat', function(err, cnt) {
       if(err)
         return res.error(err);
@@ -351,10 +359,28 @@ exports.post_challenge_fight = function(req, res, next) {
           else {
             try {
               var result = JSON.parse(stdout);
-              //TODO: update challenge
-              res.data({ 
-                combat: id,
-                winner: result.winner
+              // update challenge
+              c.users.forEach(function(u) {
+                if(first || u.username === req.user.username)
+                  u.attempts++;
+                if(u.username === result.winner)
+                  u.wins++;
+              });
+              if(result.winner) {
+                c.winner = result.winner;
+              }
+              // TODO: send emails (if first or winner changed)
+              // store the updated challenge object
+              ch.update({ id: req.param('id') }, c, { multi: false }, function(err) {
+                if(err) 
+                  return res.error(err);
+                else {
+                  res.data({ 
+                    combat: id,
+                    winner: result.winner,
+                    draw: result.draw
+                  });
+                }
               });
             }
             catch(err) {

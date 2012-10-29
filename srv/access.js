@@ -196,7 +196,10 @@ var access = function(spec, my) {
   fwk.method(that, 'accessVerifier', accessVerifier, _super);
   fwk.method(that, 'hmac', hmac, _super);
   fwk.method(that, 'next_counter', next_counter, _super);
-  fwk.method(that, 'phl0ck_store', phl0ck_store, super);
+  fwk.method(that, 'phl0ck_store', phl0ck_store, _super);
 
   return that;
 };
+
+exports.access = access;
+

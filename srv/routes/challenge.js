@@ -73,7 +73,7 @@ exports.put_challenge = function(req, res, next) {
 
   // processes the new challenge creation after
   // validation and username/email management
-  var process() {
+  function process() {
     // challenges: {
     //   id: '0nB',
     //   size: 5,
@@ -145,11 +145,10 @@ exports.get_challenge_list = function(req, res, next) {
         if(c.guest.length > 0)
           status = 'pending';
         c.users.forEach(function(u) {
-          if(!u.phl0ck)
+          if(!u.phl0ck && status !== 'waiting')
             status = 'pending';
           if(!u.phl0ck && u.username === req.user.username) {
             status = 'waiting';
-            break;
           }
         });
         list.push({
@@ -178,11 +177,10 @@ exports.get_challenge = function(req, res, next) {
       if(c.guest.length > 0)
         status = 'pending';
       c.users.forEach(function(u) {
-        if(!u.phl0ck)
+        if(!u.phl0ck && status !== 'waiting')
           status = 'pending';
         if(!u.phl0ck && u.username === req.user.username) {
           status = 'waiting';
-          break;
         }
       });
       c.status = status;
@@ -305,7 +303,7 @@ exports.post_challenge_fight = function(req, res, next) {
 
   // set the phl0ck for the given player and eventually
   // call combat() to simulate the combat if possible
-  var process(c) {
+  function process(c) {
     req.store.access.phl0ck_store(req.user.username, phl0ck, function(err, sha, path) {
       if(err)
         return res.error(err);
@@ -340,7 +338,7 @@ exports.post_challenge_fight = function(req, res, next) {
 
   // simulate the combat and update the challenge according
   // to the result of the simulation
-  var combat(c, first) {
+  function combat(c, first) {
     req.store.access.next_counter('combat', function(err, cnt) {
       if(err)
         return res.error(err);

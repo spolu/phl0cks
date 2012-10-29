@@ -33,7 +33,7 @@ exports.post_signup = function(req, res, next) {
 
       var hash = req.store.access.hmac(password);
       var auth = req.store.access.hmac(username + '-' + now.getTime());
-      var verify = req.store.access.hmac(email + '-' + Math.random()).substr(0, 4);
+      var verify = req.store.access.hmac(email + '-' + Math.random()).substr(0, 6);
 
       var usr = {
         username: username,

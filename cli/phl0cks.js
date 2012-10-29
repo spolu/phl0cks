@@ -139,6 +139,7 @@ phl0cks.welcome = function(cb_) {
   phl0cks.log.help('');
   phl0cks.log.help('To sign up for Phl0cks'.cyan);
   phl0cks.log.help('  phl0cks signup');
+  phl0cks.log.help('  phl0cks verify <code>');
   phl0cks.log.help('');
   phl0cks.log.help('To log into or out of Phl0cks'.cyan);
   phl0cks.log.help('  phl0cks login');
@@ -153,10 +154,11 @@ phl0cks.welcome = function(cb_) {
   phl0cks.log.help('To play a simulated combat in the browser'.cyan);
   phl0cks.log.help('  phl0cks play');
   phl0cks.log.help('');
-  phl0cks.log.help('To manage challenges'.cyan);
+  phl0cks.log.help('To manage challenges (require login)'.cyan);
   phl0cks.log.help('  phl0cks challenge new <size> <phl0ck> <user|email> ... [<user|email>]');
   phl0cks.log.help('  phl0cks challenge list');
-  phl0cks.log.help('  phl0cks challenge fight <index|uid> <phl0ck>');
+  phl0cks.log.help('  phl0cks challenge accept <id> <code>');
+  phl0cks.log.help('  phl0cks challenge fight <id> <phl0ck>');
   phl0cks.log.help('');
   phl0cks.log.help('To get help'.cyan);
   phl0cks.log.help('  phl0cks help [<command>]');

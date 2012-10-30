@@ -1,0 +1,13 @@
+Install the latest `phl0cks`:
+ 
+  sudo npm install phl0cks -g
+
+Then verify your account by running:
+
+  phl0cks verify {{{code}}}
+
+Please checkout the help to learn more about Phl0cks:
+
+  phl0cks help
+
+Have fun!

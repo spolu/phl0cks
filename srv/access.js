@@ -14,9 +14,10 @@ var access = function(spec, my) {
   my = my || {};
   var _super = {};        
 
-  my.app = spec.app;
-  my.cfg = spec.cfg;  
+  my.mailer = spec.mailer;
   my.mongo = spec.mongo;
+  my.cfg = spec.cfg;  
+  my.app = spec.app;
 
   // public
   var accessVerifier;       /* verify(req, res, next); */
@@ -41,6 +42,7 @@ var access = function(spec, my) {
      * We pass mongo & cfg & ... for routes
      */
     req.store = { mongo: my.mongo,
+                  mailer: my.mailer,
                   access: that,
                   cfg: my.cfg };
     req.user = null;
@@ -121,7 +123,7 @@ var access = function(spec, my) {
         else if(usr) {
           req.user = usr;
           // verification check
-          if(/^\/challenge/.text(req.url) && !req.user.verified) {
+          if(/^\/challenge/.test(req.url) && !req.user.verified) {
             return res.error(new Error('Account not verified'));
           }
           else 

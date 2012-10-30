@@ -16,7 +16,7 @@ var crypto = require('crypto');
 var app = express();
 
 // cfg
-var cfg = fwk.populateConfig(require("../config.js").config);
+var cfg = fwk.populateConfig(require("./config.js").config);
 
 // MongoDB      
 var mongo = new mongodb.Db(cfg['PHL0CKS_MONGO_DB'], 
@@ -26,9 +26,16 @@ var mongo = new mongodb.Db(cfg['PHL0CKS_MONGO_DB'],
                            { native_parser: false,
                              safe: true });
 
+// Mailer
+var mailer = require('./mailer.js').mailer({
+  cfg: cfg,
+  mongo: mongo
+});
+
 // Access
 var access = require('./access.js').access({ 
   app: app,
+  mailer: mailer,
   cfg: cfg, 
   mongo: mongo
 });

@@ -2,12 +2,9 @@ var colors = require('colors');
 var fwk = require('fwk');
 var util = require('util');
 
-// cfg
-var cfg = fwk.populateConfig(require("../config.js").config);
-
 var phl0cks = module.exports;
 
-phl0cks.VERSION = cfg['PHL0CKS_VERSION'];
+phl0cks.VERSION = '0.3.0';
 phl0cks.LOGGING = true;
 
 phl0cks.intro = function() {

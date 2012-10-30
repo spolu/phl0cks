@@ -1,0 +1,7 @@
+Dear {{{username}}},
+
+{{{body}}}
+
+Phl0cks
+---
+CoreWars meets SpaceWar! | http://phl0cks.net

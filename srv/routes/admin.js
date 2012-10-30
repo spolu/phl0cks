@@ -50,6 +50,9 @@ exports.post_signup = function(req, res, next) {
           return res.error(err);
         }
         else {
+          // send email
+          req.store.mailer.push(username, 'verify', { code: verify });
+          // send reply
           req.user = usr;
           res.data({
             username: username,
@@ -139,13 +142,9 @@ exports.get_logout = function(req, res, next) {
 exports.get_verify = function(req, res, next) {
   var code = req.param('code');
 
-  if(req.user.verified) {
-    return res.error(new Error('User already verified'));
-  }
-
   if(req.user.verify === code) {
     var c = req.store.mongo.collection('users');
-    c.update({ username: username }, 
+    c.update({ username: req.user.username }, 
              { $set: { verified: true } }, 
              { multi: false },
              function(err) {

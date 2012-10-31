@@ -121,7 +121,8 @@ app.get( '/play/:combat',                     require('./routes/player.js')
   auth(function() {
     var https_options = {
       key: fs.readFileSync('ssl/phl0cks.key'),
-      cert: fs.readFileSync('ssl/phl0cks.crt')
+      cert: fs.readFileSync('ssl/phl0cks.crt'),
+      ca: [ fs.readFileSync('ssl/gandi.pem') ]
     };
 
     var https_srv = https.createServer(https_options, app).listen(parseInt(cfg['PHL0CKS_HTTPS_PORT'], 10));

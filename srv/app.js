@@ -88,8 +88,8 @@ app.put( '/challenge',                        require('./routes/challenge.js').p
 app.get( '/challenge/list',                   require('./routes/challenge.js').get_challenge_list);
 app.get( '/challenge/:id',                    require('./routes/challenge.js').get_challenge);
 app.del( '/challenge/:id',                    require('./routes/challenge.js').del_challenge);
-app.post('/challenge/:id/add',                require('./routes/challenge.js').post_challenge_add);
-app.post('/challenge/:id/fight',              require('./routes/challenge.js').post_challenge_fight);
+app.post('/challenge/:id/accept',             require('./routes/challenge.js').post_challenge_accept);
+app.post('/challenge/:id/submit',             require('./routes/challenge.js').post_challenge_submit);
 
 
 // PLAYER [HTML]

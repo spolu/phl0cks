@@ -88,12 +88,11 @@ phl0cks.exec = function(commands, cb_) {
       default:
         phl0cks.intro();
         phl0cks.welcome(cb_);
-        cb_();
-        break;
+        return cb_();
     }
   }
   catch(err) {
-    cb_(err);
+    return cb_(err);
   }
 };
 
@@ -155,9 +154,9 @@ phl0cks.welcome = function(cb_) {
   phl0cks.log.help('');
   phl0cks.log.help('To manage challenges (require login)'.cyan);
   phl0cks.log.help('  phl0cks challenge new <size> <phl0ck> <user|email> ... [<user|email>]');
-  phl0cks.log.help('  phl0cks challenge list');
+  phl0cks.log.help('  phl0cks challenge list [<id>]');
   phl0cks.log.help('  phl0cks challenge accept <id> <code>');
-  phl0cks.log.help('  phl0cks challenge fight <id> <phl0ck>');
+  phl0cks.log.help('  phl0cks challenge submit <id> <phl0ck>');
   phl0cks.log.help('');
   phl0cks.log.help('To get help'.cyan);
   phl0cks.log.help('  phl0cks help [<command>]');

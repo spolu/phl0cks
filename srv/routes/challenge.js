@@ -169,10 +169,10 @@ exports.get_challenge_list = function(req, res, next) {
  */
 exports.get_challenge = function(req, res, next) {
   var ch = req.store.mongo.collection('challenges');
-  ch.find({ id: req.param('id') }).findOne(function(err, c) {
+  ch.findOne({ id: req.param('id') }, function(err, c) {
     if(err)
       return res.error(err);
-    else {
+    else if(c) {
       var status = 'ready';
       if(c.guest.length > 0)
         status = 'pending';
@@ -185,6 +185,9 @@ exports.get_challenge = function(req, res, next) {
       });
       c.status = status;
       return res.data(c);
+    }
+    else {
+      return res.error(new Error('Challenge unknown: ' + req.param('id')));
     }
   });
 };
@@ -219,9 +222,9 @@ exports.del_challenge = function(req, res, next) {
 };
 
 /**
- * @path POST /challenge/:id/add
+ * @path POST /challenge/:id/accept
  */
-exports.post_challenge_add = function(req, res, next) {
+exports.post_challenge_accept = function(req, res, next) {
   // req.body 
   // {
   //   code: 'a23sd2'
@@ -247,7 +250,7 @@ exports.post_challenge_add = function(req, res, next) {
           guest = g;
       });
       if(!guest) {
-        return res.error(new Error('Cannot add, code not found: ' + code));
+        return res.error(new Error('Cannot accept, code not found: ' + code));
       }
       else {
         ch.update({ id: req.param('id') },
@@ -270,9 +273,9 @@ exports.post_challenge_add = function(req, res, next) {
 
 
 /**
- * @path POST /challenge/:id/fight
+ * @path POST /challenge/:id/submit
  */
-exports.post_challenge_fight = function(req, res, next) {
+exports.post_challenge_submit = function(req, res, next) {
   // req.body
   // {
   //   phl0ck: b64
@@ -293,7 +296,7 @@ exports.post_challenge_fight = function(req, res, next) {
     else {
       // check conditions to process: not winner
       if(u.username === c.winner) {
-        return res.error('Cannot fight as winner of the challenge');
+        return res.error('Cannot submit as current winner of the challenge');
       }
       else {
         process(c);

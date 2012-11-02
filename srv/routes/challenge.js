@@ -142,7 +142,7 @@ exports.get_challenge_list = function(req, res, next) {
       var list = [];
       challenges.forEach(function(c) {
         var status = 'ready';
-        if(c.guest.length > 0)
+        if(c.guests.length > 0)
           status = 'pending';
         c.users.forEach(function(u) {
           if(!u.phl0ck && status !== 'waiting')
@@ -174,7 +174,7 @@ exports.get_challenge = function(req, res, next) {
       return res.error(err);
     else if(c) {
       var status = 'ready';
-      if(c.guest.length > 0)
+      if(c.guests.length > 0)
         status = 'pending';
       c.users.forEach(function(u) {
         if(!u.phl0ck && status !== 'waiting')

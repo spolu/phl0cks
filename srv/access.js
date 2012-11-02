@@ -1,6 +1,7 @@
 var fwk = require('fwk');
 var crypto = require('crypto');
 var fs = require('fs');
+var path = require('path');
 
 /**
  * Access checker
@@ -164,7 +165,7 @@ var access = function(spec, my) {
     //   value: 2930
     // }
     
-    c.update({ type: type }, { $inc : { value: 1 } }, function(err) {
+    c.update({ type: type }, { $inc : { value: 1 } }, { upsert: true }, function(err) {
       if(err)
         return cb_(err);
       else {
@@ -190,16 +191,24 @@ var access = function(spec, my) {
     var buf = new Buffer(b64, 'base64');
 
     var hash = crypto.createHash('sha256');
-    hash.updaet(username);
+    hash.update(username);
     hash.update(buf);
-    var sha = hash.diget('hex');
+    var sha = hash.digest('hex');
 
-    var p = path.resolve(my.cfg['PHL0CKS_DATA_PATH'] + '/phl0ck/' + username + '/' + sha);
-    fs.writeFile(p, buf, function(err) {
-      if(err)
+    var pd = path.resolve(my.cfg['PHL0CKS_DATA_PATH'] + '/phl0ck/' + username);
+    var pf = path.resolve(my.cfg['PHL0CKS_DATA_PATH'] + '/phl0ck/' + username + '/' + sha);
+    fs.mkdir(pd, function(err) {
+      if(err && err.code !== 'EEXIST') {
         return cb_(err);
+      }
       else {
-        cb_(null, sha, p);
+        fs.writeFile(pf, buf, function(err) {
+          if(err)
+            return cb_(err);
+          else {
+            cb_(null, sha, pf);
+          }
+        });
       }
     });
   };

@@ -154,6 +154,8 @@ exports.get_challenge_list = function(req, res, next) {
         list.push({
           id: c.id,
           size: c.size,
+          users: c.users,
+          pending: c.guests.length,
           winner: c.winner,
           status: status
         });
@@ -197,7 +199,7 @@ exports.get_challenge = function(req, res, next) {
  */
 exports.del_challenge = function(req, res, next) {
   var ch = req.store.mongo.collection('challenges');
-  ch.find({ id: req.param('id') }).findOne(function(err, c) {
+  ch.findOne({ id: req.param('id') }, function(err, c) {
     if(err)
       return res.error(err);
     else {
@@ -213,6 +215,7 @@ exports.del_challenge = function(req, res, next) {
           if(err)
             return res.error(err);
           else {
+            //TODO: Send email
             return res.ok();
           }
         });

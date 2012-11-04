@@ -215,7 +215,7 @@ exports.del_challenge = function(req, res, next) {
           if(err)
             return res.error(err);
           else {
-            //TODO: Send email
+            // TODO: Send email
             return res.ok();
           }
         });

@@ -4,7 +4,7 @@ var util = require('util');
 
 var phl0cks = module.exports;
 
-phl0cks.VERSION = '0.3.0';
+phl0cks.VERSION = '0.3.4';
 phl0cks.LOGGING = true;
 
 phl0cks.intro = function() {
@@ -61,24 +61,33 @@ phl0cks.exec = function(commands, cb_) {
       case 'challenge': 
       {
         phl0cks.intro();
-        phl0cks.commands[cmd]({ log: phl0cks.log, options: options })
-          .execute(args, cb_);
+        phl0cks.commands[cmd]({ 
+          log: phl0cks.log, 
+          options: options, 
+          version: phl0cks.VERSION 
+        }).execute(args, cb_);
         break;
       }
       case 'boilerplate':
       case 'simulate':
       {
         phl0cks.LOGGING = false;
-        phl0cks.commands[cmd]({ log: phl0cks.log, options: options })
-          .execute(args, cb_);
+        phl0cks.commands[cmd]({ 
+          log: phl0cks.log, 
+          options: options,
+          version: phl0cks.VERSION 
+        }).execute(args, cb_);
         break;
       }
       case 'help':
       {
         phl0cks.intro();
         if(args.length > 0) {
-          phl0cks.commands[args[0]]({ log: phl0cks.log, options: options })
-            .help(args.splice(1), cb_);
+          phl0cks.commands[args[0]]({ 
+            log: phl0cks.log, 
+            options: options,
+            version: phl0cks.VERSION 
+          }).help(args.splice(1), cb_);
         }
         else {
           phl0cks.welcome(cb_);

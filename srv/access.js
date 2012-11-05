@@ -25,6 +25,7 @@ var access = function(spec, my) {
   var hmac;                 /* hmac(data); */
   var next_counter;         /* next_counter(type, cb_); */
   var phl0ck_store;         /* phl0ck_store(b64, cb_); */
+  var check_version;        /* check_version(ver); */
 
   //private
   var check_auth;            /* check_key(req) */
@@ -56,6 +57,7 @@ var access = function(spec, my) {
       var json = {
         ok: false,
         min_version: my.cfg['PHL0CKS_MIN_VERSION'],
+        cur_version: my.cfg['PHLOCKS_VERSION'],
         logged_in: false,
         error: err.message
       }
@@ -70,6 +72,7 @@ var access = function(spec, my) {
       var json = {
         ok: true,
         min_version: my.cfg['PHL0CKS_MIN_VERSION'],
+        cur_version: my.cfg['PHL0CKS_VERSION'],
         logged_in: false,
         data: data
       };
@@ -84,6 +87,7 @@ var access = function(spec, my) {
       var json = {
         ok: true,
         min_version: my.cfg['PHL0CKS_MIN_VERSION'],
+        cur_version: my.cfg['PHLOCKS_VERSION'],
         logged_in: false
       };
       if(req.user) {
@@ -96,6 +100,11 @@ var access = function(spec, my) {
 
     if(my.cfg['DEBUG']) {
       console.log('EVAL: ' + req.url + ' (' + req.method + ')');
+    }
+
+    if(!check_version(req.headers['x-phl0cks-version'])) {
+      return res.error(new Error('Version too old: ' + req.headers['x-phl0cks-version'] +
+                                 ', min_version: ' + my.cfg['PHL0CKS_MIN_VERSION']));
     }
 
     /**
@@ -211,6 +220,21 @@ var access = function(spec, my) {
         });
       }
     });
+  };
+
+  /**
+   * Checks if the version provided is bigger than the minimal version
+   * @param v string the string representation of the version
+   */
+  check_version = function(v) {
+    var min = my.cfg['PHL0CKS_MIN_VERSION'].split('.');
+    if(!v) return false;
+    var ver = v.split('.');
+    for(var i = 0; i < min.length; i ++) {
+      if(min[i] > ver[i])
+        return false;
+    }
+    return true;
   };
 
 

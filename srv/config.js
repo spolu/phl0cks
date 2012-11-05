@@ -1,8 +1,8 @@
 var fwk = require('fwk');
 var config = fwk.baseConfig();
 
-config['PHL0CKS_VERSION'] = '0.3.0';
-config['PHL0CKS_MIN_VERSION'] = '0.3.0';
+config['PHL0CKS_VERSION'] = '0.3.4';
+config['PHL0CKS_MIN_VERSION'] = '0.3.4';
 
 config['PHL0CKS_DATA_PATH'] = 'dummy-env';
 

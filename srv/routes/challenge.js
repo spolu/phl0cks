@@ -388,6 +388,7 @@ exports.post_challenge_submit = function(req, res, next) {
                   return res.error(err);
                 else {
                   res.data({ 
+                    status: 'ready',
                     combat: id,
                     winner: result.winner,
                     draw: result.draw

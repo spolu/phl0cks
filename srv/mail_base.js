@@ -18,10 +18,10 @@ var mail = function(spec, my) {
   my = my || {}; 
   var _super = {}; 
 
-  my.username = spec.username;
+  my.username = spec.username || null;  // might be undefined
+  my.email = spec.email || null;        // might be udnefined 
   my.args = spec.args;
   my.type = spec.type || 'base';
-  my.subject = spec.subject || '<No Subject>';
 
   my.cfg = spec.cfg; 
   my.mongo = spec.mongo;
@@ -36,13 +36,23 @@ var mail = function(spec, my) {
   var send;            /* send(cb); */
 
   // protected
-  var construct_html;  /* construct() */
-  var construct_txt;   /* construct() */
+  var subject;         /* subject() */
+  var construct_html;  /* construct_html() */
+  var construct_txt;   /* construct_txt() */
 
   // private
   var construct;    /* construct() */
 
   var that = {};
+
+
+  /**
+   * Subject Construction function
+   * @param cb function (err, subj) 
+   */
+  subject = function(cb) {
+    return cb(null, 'no_subject');
+  };
 
   /**
    * HTML Construction function to be called recursively
@@ -57,7 +67,8 @@ var mail = function(spec, my) {
       var html = tmpl({ 
         body: body,
         subject: that.subject(),
-        username: my.user.username
+        username: my.username,
+        email: my.email
       });
       return cb(null, html);
     });
@@ -76,7 +87,8 @@ var mail = function(spec, my) {
       var txt = tmpl({ 
         body: body,
         subject: that.subject(),
-        username: my.user.username
+        username: my.username,
+        email: my.email
       });
       return cb(null, txt);
     });
@@ -97,6 +109,9 @@ var mail = function(spec, my) {
       if(err) return cb(err);
       else {
         my.user = usr;
+        if(my.user) {
+          my.email = my.email || my.user.email;
+        }
 
         var mplex = fwk.mplex({});
 
@@ -135,31 +150,37 @@ var mail = function(spec, my) {
       if(err)
         return cb(err);
       else {
-
-        var opt = {
-          from: "Phl0cks <admin@phl0cks.net>",
-          to: my.user.email,
-          subject: '[phl0cks] ' + my.subject,
-          text: txt,
-          html: html
-        }
-
-        // SEND
-        my.transport.sendMail(opt, function(err) {
-          if(err) return cb(err);
+        that.subject(function(err, subj) {
+          if(err)
+            return cb(err);
           else {
-            // UPDATE EMAILS DATA
-            var c = my.mongo.collection('emails');
-            var upd = { $inc: {},
-              $set: {} };
-              upd.$inc[my.type + '.cnt'] = 1;
-              upd.$set[my.type + '.lst'] = new Date();
-              c.update({usr: my.g_id}, upd, {multi: false, safe: true}, function(err) {
-                if(err) return cb(err);
-                else {
-                  return cb();
-                }
-              });
+
+            var opt = {
+              from: "Phl0cks <admin@phl0cks.net>",
+              to: my.email,
+              subject: '[phl0cks] ' + subj,
+              text: txt,
+              html: html
+            }
+
+            // SEND
+            my.transport.sendMail(opt, function(err) {
+              if(err) return cb(err);
+              else {
+                // UPDATE EMAILS DATA
+                var c = my.mongo.collection('emails');
+                var upd = { $inc: {},
+                  $set: {} };
+                  upd.$inc[my.type + '.cnt'] = 1;
+                  upd.$set[my.type + '.lst'] = new Date();
+                  c.update({usr: my.g_id}, upd, {multi: false, safe: true}, function(err) {
+                    if(err) return cb(err);
+                    else {
+                      return cb();
+                    }
+                  });
+              }
+            });
           }
         });
       }
@@ -167,6 +188,7 @@ var mail = function(spec, my) {
   }
 
   // protected
+  fwk.method(that, 'subject', subject, _super);
   fwk.method(that, 'construct_txt', construct_txt, _super);
   fwk.method(that, 'construct_html', construct_html, _super);
   fwk.method(that, 'construct', construct, _super);

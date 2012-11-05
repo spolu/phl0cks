@@ -4,9 +4,9 @@ var fs = require('fs');
 var handlebars = require('handlebars');
 
 /** 
- * Verify Mail Object
+ * Challenge New Mail Object
  *
- * Mail specialization for post-signup verification
+ * Mail specialization for challenge new
  *
  * @inherits {}
  *
@@ -23,13 +23,12 @@ var mail = function(spec, my) {
 
   var that = require('./mail_base.js').mail(spec, my);
 
-
   /**
    * Subject Construction function
    * @param cb function (err, subj) 
    */
   subject = function(cb) {
-    return cb(null, 'Welcome to Phl0cks!');
+    return cb(null, 'You\'ve just been challenged by ' + my.args.from);
   };
 
   /**
@@ -39,12 +38,13 @@ var mail = function(spec, my) {
    * @param cb(err, html) callback
    */
   construct_html = function(body, cb) {
-    fs.readFile(__dirname + '/mail/verify.html', 'utf8', function(err, src) {
+    fs.readFile(__dirname + '/mail/challenge_new.html', 'utf8', function(err, src) {
       if(err) return cb(err);
       var tmpl = handlebars.compile(src, {});
       var html = tmpl({ 
-        username: my.user.username,
-        code: my.args.code
+        from: my.args.from,
+        size: my.args.size,
+        count: my.args.count
       });
       _super.construct_html(html, cb);
     });
@@ -57,12 +57,13 @@ var mail = function(spec, my) {
    * @param cb(err, txt) callback
    */
   construct_txt = function(body, cb) {
-    fs.readFile(__dirname + '/mail/verify.txt', 'utf8', function(err, src) {
+    fs.readFile(__dirname + '/mail/challenge_new.txt', 'utf8', function(err, src) {
       if(err) return cb(err);
       var tmpl = handlebars.compile(src, {});
       var txt = tmpl({ 
-        username: my.user.username,
-        code: my.args.code
+        from: my.args.from,
+        size: my.args.size,
+        count: my.args.count
       });
       _super.construct_txt(txt, cb);
     });

@@ -60,7 +60,11 @@
         <div style="font-size: 12px;
                     color: #353738;
                     font-family: 'Helvetica Neue', Arial, Helvetica, Geneva, sans-serif">
+          {{#if username}}
           Hello <span style="font-weight: bold;">{{{username}}}</span>,
+          {{else}}
+          Hello,
+          {{/if}}
         </div>
         <!-- Body -->
         <div style="font-size: 12px;

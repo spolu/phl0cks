@@ -6,8 +6,6 @@ var handlebars = require('handlebars');
 /** 
  * Challenge New Mail Object
  *
- * Mail specialization for challenge new
- *
  * @inherits {}
  *
  * @param { username, args, cfg, mongo }
@@ -28,7 +26,7 @@ var mail = function(spec, my) {
    * @param cb function (err, subj) 
    */
   subject = function(cb) {
-    return cb(null, 'You\'ve just been challenged by ' + my.args.from);
+    return cb(null, 'You\'ve been challenged by ' + my.args.from);
   };
 
   /**
@@ -42,9 +40,12 @@ var mail = function(spec, my) {
       if(err) return cb(err);
       var tmpl = handlebars.compile(src, {});
       var html = tmpl({ 
+        id: my.args.id,
+        code: my.args.code,
         from: my.args.from,
         size: my.args.size,
-        count: my.args.count
+        count: my.args.count,
+        others: (my.args.count - 2 > 0 ? (my.args.count - 2) : undefined)
       });
       _super.construct_html(html, cb);
     });
@@ -61,9 +62,12 @@ var mail = function(spec, my) {
       if(err) return cb(err);
       var tmpl = handlebars.compile(src, {});
       var txt = tmpl({ 
+        id: my.args.id,
+        code: my.args.code,
         from: my.args.from,
         size: my.args.size,
-        count: my.args.count
+        count: my.args.count,
+        others: (my.args.count - 2 > 0 ? (my.args.count - 2) : undefined)
       });
       _super.construct_txt(txt, cb);
     });

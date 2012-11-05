@@ -107,10 +107,18 @@ exports.put_challenge = function(req, res, next) {
               var hash = crypto.createHash('sha256');
               hash.update(em + '-' + challenge.id);
               var code = hash.digest('hex').substr(0,6);
-              // TODO: send email
+              // store code
               challenge.guests.push({
                 email: em,
                 code: code
+              });
+              // send email
+              req.store.mailer.push_to_email(em, 'challenge_new', { 
+                id: challenge.id,
+                code: code,
+                from: req.user.username,
+                size: challenge.size,
+                count: emails.length + 1
               });
             });
 

@@ -61,16 +61,21 @@ var mail = function(spec, my) {
    * @param cb(err, html) callback
    */
   construct_html = function(body, cb) {
-    fs.readFile(__dirname + '/mail/base.html', 'utf8', function(err, src) {
+    that.subject(function(err, subj) {
       if(err) return cb(err);
-      var tmpl = handlebars.compile(src, {});
-      var html = tmpl({ 
-        body: body,
-        subject: that.subject(),
-        username: my.username,
-        email: my.email
-      });
-      return cb(null, html);
+      else {
+        fs.readFile(__dirname + '/mail/base.html', 'utf8', function(err, src) {
+          if(err) return cb(err);
+          var tmpl = handlebars.compile(src, {});
+          var html = tmpl({ 
+            body: body,
+            subject: subj,
+            username: my.username,
+            email: my.email
+          });
+          return cb(null, html);
+        });
+      }
     });
   };
 
@@ -81,16 +86,21 @@ var mail = function(spec, my) {
    * @param cb(err, txt) callback
    */
   construct_txt = function(body, cb) {
-    fs.readFile(__dirname + '/mail/base.txt', 'utf8', function(err, src) {
+    that.subject(function(err, subj) {
       if(err) return cb(err);
-      var tmpl = handlebars.compile(src, {});
-      var txt = tmpl({ 
-        body: body,
-        subject: that.subject(),
-        username: my.username,
-        email: my.email
-      });
-      return cb(null, txt);
+      else {
+        fs.readFile(__dirname + '/mail/base.txt', 'utf8', function(err, src) {
+          if(err) return cb(err);
+          var tmpl = handlebars.compile(src, {});
+          var txt = tmpl({ 
+            body: body,
+            subject: subj,
+            username: my.username,
+            email: my.email
+          });
+          return cb(null, txt);
+        });
+      }
     });
   };
 
@@ -167,18 +177,7 @@ var mail = function(spec, my) {
             my.transport.sendMail(opt, function(err) {
               if(err) return cb(err);
               else {
-                // UPDATE EMAILS DATA
-                var c = my.mongo.collection('emails');
-                var upd = { $inc: {},
-                  $set: {} };
-                  upd.$inc[my.type + '.cnt'] = 1;
-                  upd.$set[my.type + '.lst'] = new Date();
-                  c.update({usr: my.g_id}, upd, {multi: false, safe: true}, function(err) {
-                    if(err) return cb(err);
-                    else {
-                      return cb();
-                    }
-                  });
+                return cb();
               }
             });
           }

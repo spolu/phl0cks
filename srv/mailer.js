@@ -49,13 +49,15 @@ var mailer = function(spec, my) {
                                                                    mongo: my.mongo });
     try {
       mail.send(function(err) {
-        if(err) {
-          handle(err);
+        if(err)
+          return handle(err);
+        else {
+          console.log('{MAILER} EMAIL SENT: ' + type + ' [' + username + ']');
         }
       });
     }
     catch(err) {
-      handle(err);
+      return handle(err);
     }
   };
 
@@ -78,13 +80,15 @@ var mailer = function(spec, my) {
                                                                    mongo: my.mongo });
     try {
       mail.send(function(err) {
-        if(err) {
-          handle(err);
+        if(err)
+          return handle(err);
+        else {
+          console.log('{MAILER} EMAIL SENT: ' + type + ' [' + email + ']');
         }
       });
     }
     catch(err) {
-      handle(err);
+      return handle(err);
     }
   };
 

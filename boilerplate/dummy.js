@@ -1,5 +1,4 @@
-var util = require('util');
-
+var util = require('util'); 
 var my = {};
 
 /**
@@ -19,7 +18,7 @@ var my = {};
  */
 exports.init = function(size, spec) {
   //
-  // Your Implementation
+  // Your Implementation [use util.debug for console debbuging]
   //
   return;
 };
@@ -48,7 +47,7 @@ exports.init = function(size, spec) {
  */
 exports.control = function(step, t, ship, ships, missiles) {
   //
-  // Your Implementation
+  // Your Implementation [use util.debug for console debbuging]
   //
   return { 
     theta: Math.random() * 2 * Math.PI,

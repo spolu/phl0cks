@@ -71,6 +71,7 @@ app.configure('production', function(){
 // MAIN [TEXT/HTML]
 
 app.get( '/',                                 require('./routes/main.js').get_index);
+app.get( '/404',                              require('./routes/main.js').get_404);
 
 
 // ADMIN [JSON]
@@ -92,11 +93,9 @@ app.post('/challenge/:id/accept',             require('./routes/challenge.js').p
 app.post('/challenge/:id/submit',             require('./routes/challenge.js').post_challenge_submit);
 
 
-// PLAYER [HTML]
+// PLAY [HTML]
 
-/*
-app.get( '/play/:combat',                     require('./routes/player.js')
-*/
+app.get( '/play/:combat',                     require('./routes/play.js').get_play);
 
 
 // DB AUTHENTICATION & START

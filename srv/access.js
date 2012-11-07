@@ -105,16 +105,28 @@ var access = function(spec, my) {
       console.log('EVAL: ' + req.url + ' (' + req.method + ')');
     }
 
+    /**
+     * check for public HTML pathes
+     */
+    var public = [/^\/(\/{0,1}\?.*){0,1}$/,
+                  /^\/404\/{0,1}$/,
+                  /^\/play\/[^\s\?\/]+(\/{0,1}\?.*){0,1}$/];
+    for(var i = 0; i < public.length; i ++) {
+      var r = public[i];
+      if(r.test(req.url)) {
+        return next();
+      }
+    }
+
     if(!check_version(req.headers['x-phl0cks-version'])) {
       return res.error(new Error('Version too old: ' + req.headers['x-phl0cks-version'] +
                                  ', min_version: ' + my.cfg['PHL0CKS_MIN_VERSION']));
     }
 
     /**
-     * First check for public pathes
+     * check for public JSON pathes
      */
-    var public = [/^\/$/,
-                  /^\/login(\?.*){0,1}$/,
+    var public = [/^\/login(\?.*){0,1}$/,
                   /^\/signup(\?.*){0,1}$/];
     for(var i = 0; i < public.length; i ++) {
       var r = public[i];

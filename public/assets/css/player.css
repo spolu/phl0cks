@@ -1,0 +1,22 @@
+#world {
+  border: 1px solid #050505; 
+  width: 600px; 
+  height: 600px;
+  overflow: hidden;
+}
+
+#legend {
+  position: relative;
+  top: -5px;
+  width: 600px;
+  height: 20px;
+  text-align: left;
+}
+
+#legend .owner {
+  font-size: 12px;
+  margin-right: 5px;
+  font-weight: bold;
+}
+
+

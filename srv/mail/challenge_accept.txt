@@ -1,6 +1,6 @@
 Just to let you know that *{{{from}}}* accepted challenge `{{{id}}}`
 
-You can check the status of the callenge at any time with:
+You can check the status of the challenge at any time with:
 
   phl0cks challenge list {{{id}}}
 

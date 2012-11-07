@@ -293,7 +293,7 @@ exports.post_challenge_accept = function(req, res, next) {
         return res.error(new Error('Cannot accept, code not found: ' + code));
       }
       else {
-        // TODO: send email
+        // update collection
         ch.update({ id: req.param('id') },
                   { $pull: { guests : { code : code } },
                     $push: { users: { username: req.user.username,
@@ -304,6 +304,15 @@ exports.post_challenge_accept = function(req, res, next) {
                     if(err)
                       return res.error(err);
                     else {
+                      // send email
+                      c.users.forEach(function(u) {
+                        if(u.username !== req.user.username) {
+                          req.store.mailer.push(u.username, 'challenge_accept', { 
+                            id: c.id,
+                            from: req.user.username
+                          });
+                        }
+                      });
                       return res.ok();
                     }
                   });
@@ -415,12 +424,20 @@ exports.post_challenge_submit = function(req, res, next) {
                 if(u.username === result.winner &&
                    (u.username === req.user.username || first))
                   u.wins++;
+                // send email
+                if(result.winner === req.user.username) {
+                  req.store.mailer.push(u.username, 'challenge_combat', { 
+                    id: c.id,
+                    winner: result.winner,
+                    haswon: (result.winner === u.username),
+                    combat: id
+                  });
+                }
               });
               if(result.winner &&
                  (result.winner === req.user.username || first)) {
                 c.winner = result.winner;
               }
-              // TODO: send emails (if first or winner changed)
               // store the updated challenge object
               ch.update({ id: req.param('id') }, c, { multi: false }, function(err) {
                 if(err) 

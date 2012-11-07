@@ -64,6 +64,7 @@ var access = function(spec, my) {
       if(req.user) {
         json.logged_in = true;
         json.verified = req.user.verified;
+        json.username = req.user.username;
       }
       return res.json(json);
     };
@@ -79,6 +80,7 @@ var access = function(spec, my) {
       if(req.user) {
         json.logged_in = true;
         json.verified = req.user.verified;
+        json.username = req.user.username;
       }
       return res.json(json);
     };
@@ -93,6 +95,7 @@ var access = function(spec, my) {
       if(req.user) {
         json.logged_in = true;
         json.verified = req.user.verified;
+        json.username = req.user.username;
       }
       return res.json(json);
     };

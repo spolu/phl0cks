@@ -42,7 +42,7 @@ phl0cks.commands = {
 phl0cks.exec = function(commands, cb_) {
   try {
     var options = {};
-    for(var i = 0; i < commands.length; i ++) {
+    for(var i = commands.length - 1; i >= 0; i --) {
       if(commands[i].substr(0,2) === '--') {
         var opt = commands.splice(i, 1)[0];
         options[opt.split('=')[0].substr(2)] = opt.split('=', 2)[1] || true;

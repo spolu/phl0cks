@@ -101,7 +101,7 @@ exports.put_challenge = function(req, res, next) {
               username: req.user.username,
               phl0ck: sha,
               attempts: 0,
-              win: 0
+              wins: 0
             });
             emails.forEach(function(em) {
               var hash = crypto.createHash('sha256');
@@ -163,7 +163,7 @@ exports.get_challenge_list = function(req, res, next) {
           id: c.id,
           size: c.size,
           users: c.users,
-          pending: c.guests.length,
+          guests: c.guests.length,
           winner: c.winner,
           status: status
         });
@@ -194,6 +194,7 @@ exports.get_challenge = function(req, res, next) {
         }
       });
       c.status = status;
+      c.guests = c.guests.length;
       return res.data(c);
     }
     else {
@@ -210,7 +211,7 @@ exports.del_challenge = function(req, res, next) {
   ch.findOne({ id: req.param('id') }, function(err, c) {
     if(err)
       return res.error(err);
-    else {
+    else if(c) {
       var can = false;
       c.users.forEach(function(u) {
         if(u.username === req.user.username)
@@ -228,6 +229,9 @@ exports.del_challenge = function(req, res, next) {
           }
         });
       }
+    }
+    else {
+      return res.error(new Error('Challenge not found: ' + req.param('id')));
     }
   });
 };
@@ -251,12 +255,12 @@ exports.post_challenge_accept = function(req, res, next) {
   }
 
   var ch = req.store.mongo.collection('challenges');
-  ch.find({ id: req.param('id') }).findOne(function(err, c) {
+  ch.findOne({ id: req.param('id') }, function(err, c) {
     if(err)
       return res.error(err);
-    else {
+    else if(c) {
       var guest = null;
-      c.guests.forEeach(function(g) {
+      c.guests.forEach(function(g) {
         if(g.code === code)
           guest = g;
       });
@@ -266,7 +270,7 @@ exports.post_challenge_accept = function(req, res, next) {
       else {
         ch.update({ id: req.param('id') },
                   { $pull: { guests : { code : code } },
-                    $push: { users: { username: req.user.name,
+                    $push: { users: { username: req.user.username,
                                       attempts: 0,
                                       wins: 0 } } },
                   { multi: false },
@@ -278,6 +282,9 @@ exports.post_challenge_accept = function(req, res, next) {
                     }
                   });
       }
+    }
+    else {
+      return res.error(new Error('Challenge not found: ' + req.param('id')));
     }
   });
 };
@@ -301,17 +308,20 @@ exports.post_challenge_submit = function(req, res, next) {
   }
 
   var ch = req.store.mongo.collection('challenges');
-  ch.find({ id: req.param('id') }).findOne(function(err, c) {
+  ch.findOne({ id: req.param('id') }, function(err, c) {
     if(err)
       return res.error(err);
-    else {
+    else if(c) {
       // check conditions to process: not winner
-      if(u.username === c.winner) {
-        return res.error('Cannot submit as current winner of the challenge');
+      if(req.user.username === c.winner) {
+        return res.error(new Error('Cannot submit as current winner of the challenge'));
       }
       else {
         process(c);
       }
+    }
+    else {
+      return res.error(new Error('Challenge not found: ' + req.param('id')));
     }
   });
 
@@ -322,7 +332,7 @@ exports.post_challenge_submit = function(req, res, next) {
       if(err)
         return res.error(err);
       else {
-        var combat = c.guests.length > 0 ? false : true;
+        var go = c.guests.length > 0 ? false : true;
         var first = false;
         c.users.forEach(function(u) {
           if(u.username === req.user.username) {
@@ -331,14 +341,14 @@ exports.post_challenge_submit = function(req, res, next) {
             u.phl0ck = sha;
           }
           else if(!u.phl0ck) {
-            combat = false;
+            go = false;
           }
         });
         ch.update({ id: req.param('id') }, c, { multi: false }, function(err) {
           if(err) 
             return res.error(err);
           else {
-            if(combat) {
+            if(go) {
               combat(c, first);
             }
             else {
@@ -358,11 +368,12 @@ exports.post_challenge_submit = function(req, res, next) {
         return res.error(err);
       else {
         var id = fwk.b64encode(cnt);
-        var p = path.resolve(my.cfg['PHL0CKS_DATA_PATH'] + '/combat/' + id);
+        var p = path.resolve(req.store.cfg['PHL0CKS_DATA_PATH'] + '/combat/' + id);
         var cmd = 'phl0cks simulate ' + c.size;
         c.users.forEach(function(u) {
           cmd += ' ' + u.username + ':';
-          cmd += path.resolve(my.cfg['PHL0CKS_DATA_PATH'] + '/phl0ck/' + u.phl0ck);
+          cmd += path.resolve(req.store.cfg['PHL0CKS_DATA_PATH'] + '/phl0ck/' + 
+                              u.username + '/' + u.phl0ck);
         });
         cmd += ' --short --out=' + p;
         exec(cmd, function(err, stdout, stderr) {
@@ -375,10 +386,12 @@ exports.post_challenge_submit = function(req, res, next) {
               c.users.forEach(function(u) {
                 if(first || u.username === req.user.username)
                   u.attempts++;
-                if(u.username === result.winner)
+                if(u.username === result.winner &&
+                   u.username === req.user.username)
                   u.wins++;
               });
-              if(result.winner) {
+              if(result.winner &&
+                 result.winner === req.user.username) {
                 c.winner = result.winner;
               }
               // TODO: send emails (if first or winner changed)

@@ -4,7 +4,7 @@ var fs = require('fs');
 var handlebars = require('handlebars');
 
 /** 
- * Challenge New Mail Object
+ * Challenge Combat (when winner changes) Mail Object
  *
  * @inherits {}
  *
@@ -26,7 +26,10 @@ var mail = function(spec, my) {
    * @param cb function (err, subj) 
    */
   subject = function(cb) {
-    return cb(null, 'You\'ve been challenged by ' + my.args.from);
+    var subj = 'Challenge `' + my.args.id + '` won by ' + my.args.winner;
+    if(my.args.haswon)
+      subj = 'You just won challenge `' + my.args.id + '`!';
+    return cb(null, subj);
   };
 
   /**
@@ -36,16 +39,14 @@ var mail = function(spec, my) {
    * @param cb(err, html) callback
    */
   construct_html = function(body, cb) {
-    fs.readFile(__dirname + '/mail/challenge_new.html', 'utf8', function(err, src) {
+    fs.readFile(__dirname + '/mail/challenge_combat.html', 'utf8', function(err, src) {
       if(err) return cb(err);
       var tmpl = handlebars.compile(src, {});
       var html = tmpl({ 
         id: my.args.id,
-        code: my.args.code,
-        from: my.args.from,
-        size: my.args.size,
-        count: my.args.count,
-        others: (my.args.count - 2 > 0 ? (my.args.count - 2) : undefined)
+        winner: my.args.winner,
+        haswon: my.args.haswon,
+        combat: my.args.combat
       });
       _super.construct_html(html, cb);
     });
@@ -58,16 +59,14 @@ var mail = function(spec, my) {
    * @param cb(err, txt) callback
    */
   construct_txt = function(body, cb) {
-    fs.readFile(__dirname + '/mail/challenge_new.txt', 'utf8', function(err, src) {
+    fs.readFile(__dirname + '/mail/challenge_combat.txt', 'utf8', function(err, src) {
       if(err) return cb(err);
       var tmpl = handlebars.compile(src, {});
       var txt = tmpl({ 
         id: my.args.id,
-        code: my.args.code,
-        from: my.args.from,
-        size: my.args.size,
-        count: my.args.count,
-        others: (my.args.count - 2 > 0 ? (my.args.count - 2) : undefined)
+        winner: my.args.winner,
+        haswon: my.args.haswon,
+        combat: my.args.combat
       });
       _super.construct_txt(txt, cb);
     });

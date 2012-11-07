@@ -1,37 +1,25 @@
-
+{{#if haswon}}
 <p style="color: #353738; 
           font-size: 12px;
           font-family: 'Helvetica Neue', Arial, Helvetica, Geneva, sans-serif">
-  You've just been challenged by
-  <span style="font-weight: bold;">{{{from}}}</span> on Phl0cks
-  {{#if others}}
-  along with {{{others}} other player(s)
-  {{/if}}
-  !
+  You just won challenge 
+  <span style="font-weight: bold;">{{{id}}}</span>!
 </p>
-
+{{else}}
 <p style="color: #353738; 
           font-size: 12px;
           font-family: 'Helvetica Neue', Arial, Helvetica, Geneva, sans-serif">
-  Phl0cks is a programming game in which two or more programs control spaceships 
-  with the goal of eliminating every other enemy ships and survive as long as possible.
-  Known as `phl0cks`, the programs are written in JavaScript and submitted by the players
-  to compete against each others.
-</p>
 
-<p style="color: #353738; 
-          font-size: 12px;
-          font-family: 'Helvetica Neue', Arial, Helvetica, Geneva, sans-serif">
-  If you never used Phl0cks before please check out the following step-by-step guide to
-  get you started 
-  (<i>some programming skills or a strong willingness to learn might be required</i>):
+  <span style="font-weight: bold;">{{{from}}}</span> just won challenge 
+  <span style="font-weight: bold;">{{{id}}}</span>.
 </p>
+{{/if}]
 
 <p style="color: #353738; 
           font-size: 12px;
           font-family: 'Helvetica Neue', Arial, Helvetica, Geneva, sans-serif">
   <center>
-    <a href="https://phl0cks.net/?src=challenge_new"
+    <a href="https://phl0cks.net/play/{{{combat}}}?src=challenge_combat"
        style="text-decoration: none;">
       <div style="margin: 10px 0px 10px 0px;
                   width: 160px;
@@ -44,35 +32,30 @@
                   border-radius: 2px;
                   font-family: 'Helvetica Neue', Arial, Helvetica, Geneva, sans-serif;
                   border: 1px solid #222;">
-        Getting Started with Phl0cks
+        Replay the Combat
       </div>
     </a>
   </center>
+
+
+{{#if haswon}}
+<p style="color: #353738; 
+          font-size: 12px;
+          font-family: 'Helvetica Neue', Arial, Helvetica, Geneva, sans-serif">
+  You won't be able to submit a new phl0ck until the challenge is won by another
+  user.
 </p>
 
 <p style="color: #353738; 
           font-size: 12px;
           font-family: 'Helvetica Neue', Arial, Helvetica, Geneva, sans-serif">
-  Once you're ready or if you already used Phl0cks, please accept the challenge by running:
+  Good job! 
 </p>
-
-
-<p style="color: #353738; 
-          font-size: 12px;
-          font-family: monospace;
-          border: 1px solid #ddd;
-          margin-left: 20px;
-          margin-right: 20px;
-          padding-top: 5px;
-          padding-bottom: 5px;
-          padding-left: 10px;">
-  phl0cks challenge accept {{{id}}} {{{code}}}
-</p>
-
+{{else}}
 <p style="color: #353738; 
           font-size: 12px;
           font-family: 'Helvetica Neue', Arial, Helvetica, Geneva, sans-serif">
-  Then you'll be able to submit your phl0ck for combat with the following command:
+  You can submit a new phl0ck for combat with:
 </p>
 
 <p style="color: #353738; 
@@ -90,6 +73,8 @@
 <p style="color: #353738; 
           font-size: 12px;
           font-family: 'Helvetica Neue', Arial, Helvetica, Geneva, sans-serif">
-  Good luck!
+  Good luck! 
 </p>
+{{/if}]
 
+</p>

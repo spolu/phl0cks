@@ -22,7 +22,7 @@ exports.put_challenge = function(req, res, next) {
   var phl0ck = req.body.phl0ck;
 
   var usernames = [];
-  var emails = [];
+  var guests = [];
 
   if(!Array.isArray(players) || players.length <= 0) {
     return res.error(new Error('No challengers specified'));
@@ -31,7 +31,7 @@ exports.put_challenge = function(req, res, next) {
   var username_r = /^[a-zA-Z0-9\-_\.]{3,32}$/;
   players.forEach(function(p) {
     if(email_r.exec(p)) {
-      emails.push(p);
+      guests.push({ email: p });
     }
     else if(username_r.exec(p)) {
       usernames.push(p);
@@ -61,7 +61,7 @@ exports.put_challenge = function(req, res, next) {
       // translate users to email
       users.forEach(function(u) {
         fwk.remove(usernames, u.username);
-        emails.push(u.email);
+        guests.push({ username: u.username, email: u.email });
       });
 
       if(usernames.length > 0) {
@@ -103,22 +103,23 @@ exports.put_challenge = function(req, res, next) {
               attempts: 0,
               wins: 0
             });
-            emails.forEach(function(em) {
+            guests.forEach(function(g) {
               var hash = crypto.createHash('sha256');
-              hash.update(em + '-' + challenge.id);
+              hash.update(g.email + '-' + challenge.id);
               var code = hash.digest('hex').substr(0,6);
               // store code
               challenge.guests.push({
-                email: em,
+                email: g.email,
+                username: g.username,
                 code: code
               });
               // send email
-              req.store.mailer.push_to_email(em, 'challenge_new', { 
+              req.store.mailer.push_to_email(g.email, 'challenge_new', { 
                 id: challenge.id,
                 code: code,
                 from: req.user.username,
                 size: challenge.size,
-                count: emails.length + 1
+                count: guests.length + 1
               });
             });
 
@@ -159,11 +160,18 @@ exports.get_challenge_list = function(req, res, next) {
             status = 'waiting';
           }
         });
+        var guests = [];
+        c.guests.forEach(function(g) {
+          if(g.username)
+            guests.push(g.username);
+          else
+            guests.push(g.email);
+        })
         list.push({
           id: c.id,
           size: c.size,
           users: c.users,
-          guests: c.guests.length,
+          guests: guests,
           winner: c.winner,
           status: status
         });
@@ -194,7 +202,14 @@ exports.get_challenge = function(req, res, next) {
         }
       });
       c.status = status;
-      c.guests = c.guests.length;
+      var guests = [];
+      c.guests.forEach(function(g) {
+        if(g.username)
+          guests.push(g.username);
+        else
+          guests.push(g.email);
+      })
+      c.guests = guests;
       return res.data(c);
     }
     else {
@@ -391,7 +406,7 @@ exports.post_challenge_submit = function(req, res, next) {
                   u.wins++;
               });
               if(result.winner &&
-                 result.winner === req.user.username) {
+                 (result.winner === req.user.username || first)) {
                 c.winner = result.winner;
               }
               // TODO: send emails (if first or winner changed)

@@ -1,0 +1,9 @@
+Just to let you know that *{{{from}}}* accepted challenge `{{{id}}}`
+
+You can check the status of the callenge at any time with:
+
+  phl0cks challenge list {{{id}}}
+
+You'll receive an email as soon as the first combat is played.
+
+Good luck!

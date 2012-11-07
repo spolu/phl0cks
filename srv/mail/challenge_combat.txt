@@ -1,0 +1,16 @@
+{{#if haswon}}You just won challenge {{{id}}}!{{else}}*{{{from}}}* just won challenge {{{id}}}.{{/if}}
+
+  Replay the Combat here: https://phl0cks.net/play/{{{combat}}}?src=challenge_combat
+{{#if haswon}}
+You won't be able to submit a new phl0ck until the challenge is won by another user.
+
+Good job! 
+{{else}}
+You can submit a new phl0ck for combat with:
+
+  phl0cks challenge submit {{{id}}} <phl0ck>
+
+Good luck! 
+{{/if}}
+
+

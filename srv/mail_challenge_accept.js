@@ -4,7 +4,7 @@ var fs = require('fs');
 var handlebars = require('handlebars');
 
 /** 
- * Challenge New Mail Object
+ * Challenge Accept Mail Object
  *
  * @inherits {}
  *
@@ -26,7 +26,7 @@ var mail = function(spec, my) {
    * @param cb function (err, subj) 
    */
   subject = function(cb) {
-    return cb(null, 'You\'ve been challenged by ' + my.args.from);
+    return cb(null, 'Challenge `' + my.args.id + '` accepted by ' + my.args.from);
   };
 
   /**
@@ -36,16 +36,12 @@ var mail = function(spec, my) {
    * @param cb(err, html) callback
    */
   construct_html = function(body, cb) {
-    fs.readFile(__dirname + '/mail/challenge_new.html', 'utf8', function(err, src) {
+    fs.readFile(__dirname + '/mail/challenge_accept.html', 'utf8', function(err, src) {
       if(err) return cb(err);
       var tmpl = handlebars.compile(src, {});
       var html = tmpl({ 
         id: my.args.id,
-        code: my.args.code,
-        from: my.args.from,
-        size: my.args.size,
-        count: my.args.count,
-        others: (my.args.count - 2 > 0 ? (my.args.count - 2) : undefined)
+        from: my.args.from
       });
       _super.construct_html(html, cb);
     });
@@ -58,16 +54,12 @@ var mail = function(spec, my) {
    * @param cb(err, txt) callback
    */
   construct_txt = function(body, cb) {
-    fs.readFile(__dirname + '/mail/challenge_new.txt', 'utf8', function(err, src) {
+    fs.readFile(__dirname + '/mail/challenge_accept.txt', 'utf8', function(err, src) {
       if(err) return cb(err);
       var tmpl = handlebars.compile(src, {});
       var txt = tmpl({ 
         id: my.args.id,
-        code: my.args.code,
-        from: my.args.from,
-        size: my.args.size,
-        count: my.args.count,
-        others: (my.args.count - 2 > 0 ? (my.args.count - 2) : undefined)
+        from: my.args.from
       });
       _super.construct_txt(txt, cb);
     });

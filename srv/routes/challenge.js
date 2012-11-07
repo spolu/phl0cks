@@ -29,17 +29,21 @@ exports.put_challenge = function(req, res, next) {
   }
   var email_r = /^[a-zA-Z0-9\._\-\+]+@[a-z0-9\._\-]{2,}\.[a-z]{2,4}$/;
   var username_r = /^[a-zA-Z0-9\-_\.]{3,32}$/;
-  players.forEach(function(p) {
+  for(var i = 0; i < players.length; i ++) {
+    var p = players[i];
     if(email_r.exec(p)) {
       guests.push({ email: p });
     }
     else if(username_r.exec(p)) {
+      if(p === req.user.username) {
+        return res.error(new Error('Connot challenge yourself: ' + p));
+      }
       usernames.push(p);
     }
     else {
       return res.error(new Error('Invalid player <user|email>: ' + p));
     }
-  });
+  }
 
   if(typeof size !== 'number' || !(size > 0 && size < 20)) {
     return res.error(new Error('Invalid phl0ck size: ' + size));
@@ -274,6 +278,12 @@ exports.post_challenge_accept = function(req, res, next) {
     if(err)
       return res.error(err);
     else if(c) {
+      for(var i = 0; i < c.users.length; i ++) {
+        var u = c.users[i];
+        if(u.username === req.user.username) {
+          return res.error(new Error('User already accepted challenge: ' + u.username));
+        }
+      }
       var guest = null;
       c.guests.forEach(function(g) {
         if(g.code === code)
@@ -283,6 +293,7 @@ exports.post_challenge_accept = function(req, res, next) {
         return res.error(new Error('Cannot accept, code not found: ' + code));
       }
       else {
+        // TODO: send email
         ch.update({ id: req.param('id') },
                   { $pull: { guests : { code : code } },
                     $push: { users: { username: req.user.username,
@@ -402,7 +413,7 @@ exports.post_challenge_submit = function(req, res, next) {
                 if(first || u.username === req.user.username)
                   u.attempts++;
                 if(u.username === result.winner &&
-                   u.username === req.user.username)
+                   (u.username === req.user.username || first))
                   u.wins++;
               });
               if(result.winner &&

@@ -17,6 +17,8 @@ var my = {};
  * @param spec specifications of the simulated world
  */
 exports.init = function(size, spec) {
+  my.spec = spec;
+  my.size = size;
   //
   // Your Implementation [use util.debug for console debbuging]
   //

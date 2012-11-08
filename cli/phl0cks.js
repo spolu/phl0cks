@@ -6,6 +6,7 @@ var phl0cks = module.exports;
 
 phl0cks.VERSION = '0.3.4';
 phl0cks.LOGGING = true;
+phl0cks.options = {};
 
 phl0cks.intro = function() {
   phl0cks.log.info('Welcome to Phl0cks'); 
@@ -41,11 +42,10 @@ phl0cks.commands = {
 
 phl0cks.exec = function(commands, cb_) {
   try {
-    var options = {};
     for(var i = commands.length - 1; i >= 0; i --) {
       if(commands[i].substr(0,2) === '--') {
         var opt = commands.splice(i, 1)[0];
-        options[opt.split('=')[0].substr(2)] = opt.split('=', 2)[1] || true;
+        phl0cks.options[opt.split('=')[0].substr(2)] = opt.split('=', 2)[1] || true;
       }
     }
 
@@ -63,7 +63,7 @@ phl0cks.exec = function(commands, cb_) {
         phl0cks.intro();
         phl0cks.commands[cmd]({ 
           log: phl0cks.log, 
-          options: options, 
+          options: phl0cks.options, 
           version: phl0cks.VERSION 
         }).execute(args, cb_);
         break;
@@ -74,7 +74,7 @@ phl0cks.exec = function(commands, cb_) {
         phl0cks.LOGGING = false;
         phl0cks.commands[cmd]({ 
           log: phl0cks.log, 
-          options: options,
+          options: phl0cks.options,
           version: phl0cks.VERSION 
         }).execute(args, cb_);
         break;
@@ -85,7 +85,7 @@ phl0cks.exec = function(commands, cb_) {
         if(args.length > 0) {
           phl0cks.commands[args[0]]({ 
             log: phl0cks.log, 
-            options: options,
+            options: phl0cks.options,
             version: phl0cks.VERSION 
           }).help(args.splice(1), cb_);
         }
@@ -137,7 +137,10 @@ phl0cks.log = {
 phl0cks.error = function(err) {
   phl0cks.log.err('');
   phl0cks.log.err('ERROR: ' + err.message.red);
-  phl0cks.log.err(err.stack.substr(err.stack.indexOf('\n') + 1));
+  if(phl0cks.options.debug)
+    phl0cks.log.err(err.stack.substr(err.stack.indexOf('\n') + 1));
+  else
+    phl0cks.log.err('');
 };
 
 

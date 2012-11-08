@@ -1,8 +1,14 @@
+var fs = require('fs');
+var path = require('path');
 var fwk = require('fwk');
 var config = fwk.baseConfig();
 
-config['PHL0CKS_VERSION'] = '0.4.0';
-config['PHL0CKS_MIN_VERSION'] = '0.4.0';
+var PACKAGE_JSON = JSON.parse(
+  fs.readFileSync(path.join( __dirname, '..', 'package.json' ))
+);
+
+config['PHL0CKS_VERSION'] = PACKAGE_JSON.version;
+config['PHL0CKS_MIN_VERSION'] = PACKAGE_JSON.min_version;
 
 config['PHL0CKS_DATA_PATH'] = 'dummy-env';
 

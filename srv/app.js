@@ -10,6 +10,7 @@ var http = require('http');
 var https = require('https');
 var handlebars = require('handlebars');
 var fs = require('fs');
+var path = require('path');
 var mongodb = require('mongodb');
 var crypto = require('crypto');
 
@@ -114,9 +115,9 @@ app.get( '/play/:combat',                     require('./routes/play.js').get_pl
   console.log('Starting...');
   auth(function() {
     var https_options = {
-      key: fs.readFileSync('ssl/phl0cks.key'),
-      cert: fs.readFileSync('ssl/phl0cks.crt'),
-      ca: [ fs.readFileSync('ssl/gandi.pem') ]
+      key: fs.readFileSync(path.join(__dirname, '/', 'ssl/phl0cks.key')),
+      cert: fs.readFileSync(path.join(__dirname, '/', 'ssl/phl0cks.crt')),
+      ca: [ fs.readFileSync(path.join(__dirname, '/', 'ssl/gandi.pem')) ]
     };
 
     var https_srv = https.createServer(https_options, app).listen(parseInt(cfg['PHL0CKS_HTTPS_PORT'], 10));

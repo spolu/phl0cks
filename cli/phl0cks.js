@@ -1,10 +1,16 @@
 var colors = require('colors');
 var fwk = require('fwk');
 var util = require('util');
+var fs = require('fs');
+var path = require('path');
 
 var phl0cks = module.exports;
 
-phl0cks.VERSION = '0.4.0';
+phl0cks.PACKAGE_JSON = JSON.parse(
+  fs.readFileSync(path.join( __dirname, '..', 'package.json' ))
+);
+
+phl0cks.VERSION = phl0cks.PACKAGE_JSON.version;
 phl0cks.LOGGING = true;
 phl0cks.options = {};
 

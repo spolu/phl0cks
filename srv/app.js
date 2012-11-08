@@ -33,12 +33,7 @@ var mailer = require('./mailer.js').mailer({
 });
 
 // Access
-var access = require('./access.js').access({ 
-  app: app,
-  mailer: mailer,
-  cfg: cfg, 
-  mongo: mongo
-});
+var access = require('./access.js').access({});
 
 
 // Configuration
@@ -125,6 +120,16 @@ app.get( '/play/:combat',                     require('./routes/play.js').get_pl
     };
 
     var https_srv = https.createServer(https_options, app).listen(parseInt(cfg['PHL0CKS_HTTPS_PORT'], 10));
+    var io = require('socket.io').listen(https_srv, { log: false });
+
+    access.setStore({
+      app: app,
+      io: io,
+      mailer: mailer,
+      cfg: cfg, 
+      mongo: mongo
+    });
+
     console.log('HTTPS Server started on port: ' + cfg['PHL0CKS_HTTPS_PORT']);
   });
 })();

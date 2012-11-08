@@ -9,18 +9,15 @@ var path = require('path');
  *
  * @inherits events.EventEmitter
  *
- * @param spec { app, cfg, mongo }
+ * @param spec {}
  */
 var access = function(spec, my) {
   my = my || {};
   var _super = {};        
 
-  my.mailer = spec.mailer;
-  my.mongo = spec.mongo;
-  my.cfg = spec.cfg;  
-  my.app = spec.app;
 
   // public
+  var setStore;             /* setStore(spec); */
   var accessVerifier;       /* verify(req, res, next); */
   var hmac;                 /* hmac(data); */
   var next_counter;         /* next_counter(type, cb_); */
@@ -32,6 +29,18 @@ var access = function(spec, my) {
 
   
   var that = {};  
+
+  /**
+   * Sets variable for request store
+   * @param spec object {  app, cfg, mailer, io, mongo }
+   */
+  setStore = function(spec) {
+    my.mailer = spec.mailer;
+    my.io = spec.io;
+    my.mongo = spec.mongo;
+    my.cfg = spec.cfg;  
+    my.app = spec.app;
+  };
   
   /**
    * Asynchronous verifier for user access
@@ -45,6 +54,7 @@ var access = function(spec, my) {
      */
     req.store = { mongo: my.mongo,
                   mailer: my.mailer,
+                  io: my.io,
                   access: that,
                   cfg: my.cfg };
     req.user = null;
@@ -253,7 +263,9 @@ var access = function(spec, my) {
   };
 
 
+  fwk.method(that, 'setStore', setStore, _super);
   fwk.method(that, 'accessVerifier', accessVerifier, _super);
+
   fwk.method(that, 'hmac', hmac, _super);
   fwk.method(that, 'next_counter', next_counter, _super);
   fwk.method(that, 'phl0ck_store', phl0ck_store, _super);

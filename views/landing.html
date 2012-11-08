@@ -1,1 +1,118 @@
-landing
+<!DOCTYPE html>
+<html lang="en" xmlns:fb="http://ogp.me/ns/fb#">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width,user-scalable=no,minimum-scale=1.0,maximum-scale=1.0">
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+
+    <title>Phl0cks</title>
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Icons -->
+    <link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+    <!-- Styles -->
+    <link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Libs -->
+    <script src="/lib/jquery-1.8.2.min.js"></script>
+    <script src="/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/lib/cell-0.3.min.js"></script>
+
+    <!-- Styles -->
+    <link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/base.css" rel="stylesheet">
+    <link href="/assets/css/landing.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="title">Phl0cks</div>
+      <p class="text">
+      Phl0cks is a programming game in which two or more programs control spaceships 
+      with the goal of eliminating every other enemy ships and survive as long as possible.
+      Known as `phl0cks`, the programs are written in JavaScript and submitted by the players
+      to compete against each others.
+      </p>
+      <center>
+        <a class="button">
+          Watch a Phl0cks Match
+        </a>
+      </center>
+      <p class="text">
+      Building the perfect phl0ck will require studying complex machine learning algorithms
+      and IA techniques, but you can start from the beggining and progress with your friends, 
+      combatting their phl0cks and improving yours through challenges sent to each others.
+      </p>
+      <h2>Getting Started [adventurous geek mode]</h4>
+      <p class="code">
+        sudo npm install phl0cks -g
+      </p>
+      <p class="code">
+        phl0cks help
+      </p>
+
+      <h2>Getting Started [beginner mode]</h4>
+      <p class="text">
+        <ul>
+          <li>Install NodeJS 
+            [go <a href="http://nodejs.org">here</a>]
+          </li>
+          <li>Open a Terminal (`Terminal` on OSX, `cmd` on Windows, `xterm` on Linux)<br/>
+            <i>Google can help you here...</i>
+          </li>
+            
+          <li>Install Phl0cks
+            <p class="code">
+              sudo npm install phl0cks -g
+             </p>
+          </li>
+          <li>
+            Signup for phl0cks
+            <p class="code">
+              phl0cks signup
+            </p>
+          </li>
+          <li>
+            Verify your accout
+            [you should have received an email] (replace &lt;...&gt; by actual values)
+            <p class="code">
+              phl0cks verify &lt;code&gt;
+            </p>
+          </li>
+          <li>Create a dummy phl0ck 
+            [see <a href="http://en.wikipedia.org/wiki/Redirection_(computing)">this</a>]
+            <p class="code">
+              phl0cks boilerplate dummy > dummy.js
+            </p>
+          </li>
+          <li>Simulate a combat between 2 instances of your phl0ck
+            [see <a href="http://en.wikipedia.org/wiki/Redirection_(computing)">this</a> again]
+            <p class="code">
+              phl0cks simulate 4 dummy.js dummy.js | phl0cks play
+            </p>
+          </li>
+          <li>Accept the challenge you received
+            <p class="code">
+              phl0cks challenge accept &lt;id&gt; &lt;code&gt;
+            </p>
+          </li>
+          <li>Submit your dummy phl0ck to combat for the challenge
+            <p class="code">
+              phl0cks challenge submit &lt;id&gt; dummy.js
+            </p>
+          </li>
+          <li>You're all set! <br/>
+            Edit dummy.js and make it more powerful to win your challenges!
+          </li>
+        </ul>
+      </p>
+    </div>
+  </body>
+</html>

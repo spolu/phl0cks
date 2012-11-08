@@ -4,7 +4,7 @@ var util = require('util');
 
 var phl0cks = module.exports;
 
-phl0cks.VERSION = '0.3.4';
+phl0cks.VERSION = '0.4.0';
 phl0cks.LOGGING = true;
 phl0cks.options = {};
 

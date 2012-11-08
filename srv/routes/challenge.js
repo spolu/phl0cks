@@ -428,7 +428,7 @@ exports.post_challenge_submit = function(req, res, next) {
                    (u.username === req.user.username || first))
                   u.wins++;
                 // send email
-                if(result.winner === req.user.username) {
+                if(result.winner === req.user.username || first) {
                   req.store.mailer.push(u.username, 'challenge_combat', { 
                     id: c.id,
                     winner: result.winner,

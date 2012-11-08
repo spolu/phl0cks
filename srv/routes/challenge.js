@@ -97,6 +97,7 @@ exports.put_challenge = function(req, res, next) {
           else {
             var challenge = {
               id: fwk.b64encode(cnt),
+              created_at: new Date(),
               size: size,
               users: [],
               guests: []
@@ -342,7 +343,9 @@ exports.post_challenge_submit = function(req, res, next) {
     return res.error(new Error('Error transmitting phl0ck code'));
   }
 
+  var cc = req.store.mongo.collection('combats');
   var ch = req.store.mongo.collection('challenges');
+
   ch.findOne({ id: req.param('id') }, function(err, c) {
     if(err)
       return res.error(err);
@@ -443,11 +446,25 @@ exports.post_challenge_submit = function(req, res, next) {
                 if(err) 
                   return res.error(err);
                 else {
-                  res.data({ 
-                    status: 'ready',
-                    combat: id,
+                  var combat = {
+                    created_at: new Date(),
+                    id: id,
+                    challenge: c.id,
                     winner: result.winner,
                     draw: result.draw
+                  }
+                  // finally insert new combat
+                  cc.insert(combat, function(err) {
+                    if(err)
+                      return res.error(err);
+                    else {
+                      res.data({ 
+                        status: 'ready',
+                        combat: id,
+                        winner: result.winner,
+                        draw: result.draw
+                      });
+                    }
                   });
                 }
               });

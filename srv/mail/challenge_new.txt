@@ -1,8 +1,8 @@
 You've just been challenged by *{{{from}}}* on Phl0cks{{#if others}} along with {{{others}}} other player(s){{/if}}!
 
-Phl0cks is a programming game in which two or more programs control spaceships with the goal of eliminating every other enemy ships and survive as long as possible. Known as `phl0cks`, the programs are written in JavaScript and submitted by the players to compete against each others.
+Phl0cks is a programming game in which two or more programs control spaceships with the goal of eliminating every other enemy ship and survive as long as possible. Known as `phl0cks`, the programs are written in JavaScript and submitted by the players to compete against each other.
 
-If you never used Phl0cks before please check out the following step-by-step guide to get you started (some programming skills might be required or a strong willingness to learn):
+If you've never used Phl0cks before please check out the following step-by-step guide to get started (some programming skills might be required or a strong willingness to learn):
 
 Getting Started with Phl0cks: https://phl0cks.net/?src=challenge_new
 

@@ -1,6 +1,6 @@
 {{#if haswon}}Congratulations! You just won challenge {{{id}}}!{{else}}Bummer, *{{{winner}}}* just won challenge {{{id}}}.{{/if}}
 
-  Replay the Combat here: https://phl0cks.net/play/{{{combat}}}?src=challenge_combat
+  Replay the Combat here: https://phl0cks.net:3210/play/{{{combat}}}?src=challenge_combat
 {{#if haswon}}
 Now that you are the challenge winner, you won't be able to submit a new phl0ck until the challenge is won by another user.
 

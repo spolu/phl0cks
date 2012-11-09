@@ -22,6 +22,11 @@ body {
   margin-top: 5px;
 }
 
+.title a {
+  text-decoration: none;
+  color: #fff;
+}
+
 p {
   margin-top: 20px;
   margin-bottom: 20px;

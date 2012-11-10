@@ -1,11 +1,46 @@
 var util = require('util'); 
-var my = {};
+
+/**
+ * -------
+ * Helpers
+ * -------
+ */
+var dist = function(v1, v2) {
+  return Math.sqrt((v1.x - v2.x) * (v1.x - v2.x) +
+                   (v1.y - v2.y) * (v1.y - v2.y));
+};
+
+var scalar = function(v1, v2) {
+  return v1.x * v2.x + v1.y * v2.y;
+}
+
+var norm = function(v) {
+  return Math.sqrt(scalar(v,v));
+}
+
+var angle = function(v1, v2) {
+  return Math.acos(scalar(v1, v2) / (norm(v1) * norm(v2)));
+};
+
+var azimut = function(ship, target) {
+  var v = { 
+    x: target.state.p.x - ship.state.p.x,
+    y: target.state.p.y - ship.state.p.y
+  };
+  var t = angle({ x: 1, y: 0 }, v);
+  if(v.y > 0) return t;
+  else return -t;
+};
+
 
 /**
  * --------------
  * Initialization
  * --------------
- *
+ */
+var my = {};
+
+/*
  *  The `init` function is called with the number of ships active per
  *  phl0cks in this game. The `init` function is a good place to
  *  initialize your data structure and prepare everything for the

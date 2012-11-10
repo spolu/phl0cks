@@ -1,12 +1,12 @@
 {
   "name": "phl0cks",
-  "description": "Flawless command-line controls for phl0cks",
+  "description": "Competitive AI progamming game somewhere between CoreWars & SpaceWar!",
   "keywords": [
     "phl0cks",
     "game",
     "cli"
   ],
-  "version": "0.4.6",
+  "version": "0.4.7",
   "min_version": "0.4.0",
   "author": "Stanislas Polu <polu.stanislas@gmail.com>",
   "maintainers": [],

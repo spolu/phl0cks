@@ -6,7 +6,7 @@
     "game",
     "cli"
   ],
-  "version": "0.4.8",
+  "version": "0.4.9",
   "min_version": "0.4.0",
   "author": "Stanislas Polu <polu.stanislas@gmail.com>",
   "maintainers": [],

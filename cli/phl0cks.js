@@ -41,6 +41,7 @@ phl0cks.commands = {
   'logout': require('../lib/commands/logout.js').logout,
   'boilerplate': require('../lib/commands/boilerplate.js').boilerplate,
   'simulate': require('../lib/commands/simulate.js').simulate,
+  'test': require('../lib/commands/test.js').test,
   'play': require('../lib/commands/play.js').play,
   'challenge': require('../lib/commands/challenge.js').challenge
 };
@@ -65,6 +66,7 @@ phl0cks.exec = function(commands, cb_) {
       case 'logout':
       case 'play':
       case 'challenge': 
+      case 'test':
       {
         phl0cks.intro();
         phl0cks.commands[cmd]({ 
@@ -166,6 +168,7 @@ phl0cks.welcome = function(cb_) {
   phl0cks.log.help('');
   phl0cks.log.help('To simulate a combat locally'.cyan);
   phl0cks.log.help('  phl0cks simulate <size> <phl0ck1> ... [<phl0ckN>]');
+  phl0cks.log.help('  phl0cks test <phl0ck> [<size>]');
   phl0cks.log.help('');
   phl0cks.log.help('To play a simulated combat in the browser'.cyan);
   phl0cks.log.help('  phl0cks play');
